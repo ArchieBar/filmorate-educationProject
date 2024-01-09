@@ -21,7 +21,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void methodForGettingAllMoviesShouldReturnCorrectNumberOfMovies() throws ValidationException {
+    public void methodForGettingAllMoviesShouldReturnCorrectNumberOfMovies() throws ValidationException {
         Film film1 = new Film("name", "description", "2000-01-01", 100);
         Film film2 = new Film("name", "description", "2000-01-01", 100);
         filmController.createFilm(film1);
@@ -31,7 +31,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void createdMovieMustMatchTheMovieInMemory() throws ValidationException {
+    public void createdMovieMustMatchTheMovieInMemory() throws ValidationException {
         Film film1 = new Film("name", "description", "2000-01-01", 100);
         filmController.createFilm(film1);
 
@@ -39,7 +39,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void afterUpdatingTheMovieOnlyTheUpdatedMovieShouldBeStoredInMemory() throws ValidationException {
+    public void afterUpdatingTheMovieOnlyTheUpdatedMovieShouldBeStoredInMemory() throws ValidationException {
         Film film1 = new Film("name", "description", "2000-01-01", 100);
         filmController.createFilm(film1);
 
@@ -55,7 +55,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void ifYouTryToCreateAMovieWithTheWrongNameAnExceptionShouldBeThrown() {
+    public void ifYouTryToCreateAMovieWithTheWrongNameAnExceptionShouldBeThrown() {
         final ValidationException exceptionFilmEmptyName = assertThrows(ValidationException.class,
                 () -> filmController.createFilm(new Film(" ", "description",
                         "2000-01-01", 100)));
@@ -64,7 +64,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void ifYouTryToCreateAMovieWithIncorrectDescriptionAnExceptionShouldBeThrown() throws ValidationException {
+    public void ifYouTryToCreateAMovieWithIncorrectDescriptionAnExceptionShouldBeThrown() throws ValidationException {
         final ValidationException exceptionFilmDescription201Char = assertThrows(ValidationException.class,
                 () -> filmController.createFilm(new Film("name",
                         "ОписаниеРовно201СимволОписаниеРовно201СимволОписаниеРовно201Символ" +
@@ -95,7 +95,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void ifYouTryToCreateAMovieWithIncorrectDataReleaseAnExceptionShouldBeThrown() throws ValidationException {
+    public void ifYouTryToCreateAMovieWithIncorrectDataReleaseAnExceptionShouldBeThrown() throws ValidationException {
         Film beforeEarliestReleaseDataFilm = new Film("beforeEarliestReleaseDataFilm", "Новое_Описание_1",
                 "1850-01-01", 100);
         Film earliestReleaseDataFilm = new Film("earliestReleaseDataFilm", "Новое_Описание_1",
@@ -115,7 +115,7 @@ class FilmControllerTest {
     }
 
     @Test
-    void ifYouTryToCreateAMovieWithNegativeDurationAnExceptionShouldBeThrown() throws ValidationException {
+    public void ifYouTryToCreateAMovieWithNegativeDurationAnExceptionShouldBeThrown() throws ValidationException {
         Film filmNegativeDuration = new Film("filmNegativeDuration", "Описание_1",
                 "2000-01-01", -100);
         Film filmZeroDuration = new Film("filmZeroDuration", "Описание_1",
