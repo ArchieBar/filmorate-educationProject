@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Data
 public class Film {
-    public final static LocalDate EARLIEST_RELEASE_DATE =
+    public static final LocalDate EARLIEST_RELEASE_DATE =
             LocalDate.of(1895, 12, 28);
 
     private int id;
