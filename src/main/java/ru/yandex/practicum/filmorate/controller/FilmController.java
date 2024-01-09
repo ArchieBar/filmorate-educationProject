@@ -19,7 +19,7 @@ import java.util.Map;
 @RequestMapping("/films")
 public class FilmController {
 
-    public final LocalDate EARLIEST_RELEASE_DATE =
+    private final LocalDate earliestReleaseDate =
             LocalDate.of(1895, 12, 28);
     private int id = 1;
     private final Map<Integer, Film> films = new HashMap<>();
@@ -71,11 +71,11 @@ public class FilmController {
             throw new ValidationException("Описание фильма не может быть больше 200 символов. " +
                     "Символов: " + film.getDescription().length());
         }
-        if (film.getReleaseDate().isBefore(EARLIEST_RELEASE_DATE)) {
+        if (film.getReleaseDate().isBefore(earliestReleaseDate)) {
             flag = true;
-            log.debug("Дата релиза фильма раньше " + EARLIEST_RELEASE_DATE +
+            log.debug("Дата релиза фильма раньше " + earliestReleaseDate +
                     ": " + film);
-            throw new ValidationException("Дата релиза фильма не может быть раньше " + EARLIEST_RELEASE_DATE.format(DateTimeFormatter.ISO_DATE));
+            throw new ValidationException("Дата релиза фильма не может быть раньше " + earliestReleaseDate.format(DateTimeFormatter.ISO_DATE));
         }
         if (film.getDuration() < 0) {
             flag = true;
