@@ -12,7 +12,9 @@ import java.time.format.DateTimeFormatter;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FilmControllerTest {
+
     FilmController filmController;
+
     @BeforeEach
     public void setUp() {
         filmController = new FilmController();
@@ -66,8 +68,8 @@ class FilmControllerTest {
         final ValidationException exceptionFilmDescription201Char = assertThrows(ValidationException.class,
                 () -> filmController.createFilm(new Film("name",
                         "ОписаниеРовно201СимволОписаниеРовно201СимволОписаниеРовно201Символ" +
-                        "ОписаниеРовно201СимволОписаниеРовно201СимволОписаниеРовно201Символ" +
-                        "ОписаниеРовно201СимволОписаниеРовно201СимволОписаниеРовно201СимволОпи",
+                                "ОписаниеРовно201СимволОписаниеРовно201СимволОписаниеРовно201Символ" +
+                                "ОписаниеРовно201СимволОписаниеРовно201СимволОписаниеРовно201СимволОпи",
                         "2000-01-01", 100)));
 
 
@@ -114,11 +116,11 @@ class FilmControllerTest {
 
     @Test
     void ifYouTryToCreateAMovieWithNegativeDurationAnExceptionShouldBeThrown() throws ValidationException {
-        Film filmNegativeDuration = new  Film("filmNegativeDuration", "Описание_1",
+        Film filmNegativeDuration = new Film("filmNegativeDuration", "Описание_1",
                 "2000-01-01", -100);
-        Film filmZeroDuration = new  Film("filmZeroDuration", "Описание_1",
+        Film filmZeroDuration = new Film("filmZeroDuration", "Описание_1",
                 "2000-01-01", 0);
-        Film filmNormalDuration = new  Film("filmNormalDuration", "Описание_1",
+        Film filmNormalDuration = new Film("filmNormalDuration", "Описание_1",
                 "2000-01-01", 100);
 
         final ValidationException exceptionNegativeDuration = assertThrows(ValidationException.class,
