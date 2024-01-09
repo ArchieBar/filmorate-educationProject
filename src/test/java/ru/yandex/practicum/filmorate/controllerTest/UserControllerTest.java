@@ -21,24 +21,24 @@ class UserControllerTest {
 
     @Test
     void methodForGettingAllUsersShouldReturnCorrectNumberOfUsers() throws ValidationException {
-        User user_1 = new User("email_1@email.ru", "login", "name", "2000-01-01");
-        User user_2 = new User("email_2@email.ru", "login", "name", "2000-01-01");
-        User user_3 = new User("email_3@email.ru", "login", "name", "1946-08-20");
+        User user1 = new User("email_1@email.ru", "login", "name", "2000-01-01");
+        User user2 = new User("email_2@email.ru", "login", "name", "2000-01-01");
+        User user3 = new User("email_3@email.ru", "login", "name", "1946-08-20");
 
-        userController.createUser(user_1);
-        userController.createUser(user_2);
-        userController.createUser(user_3);
+        userController.createUser(user1);
+        userController.createUser(user2);
+        userController.createUser(user3);
 
         assertEquals(3, userController.getAllUsers().size());
     }
 
     @Test
     void createdUserMustMatchTheUserInMemory() throws ValidationException {
-        User user_1 = new User("email_1@email.ru", "login", "name", "2000-01-01");
+        User user1 = new User("email_1@email.ru", "login", "name", "2000-01-01");
 
-        userController.createUser(user_1);
+        userController.createUser(user1);
 
-        assertEquals(user_1, userController.getAllUsers().get(0));
+        assertEquals(user1, userController.getAllUsers().get(0));
     }
 
     @Test
