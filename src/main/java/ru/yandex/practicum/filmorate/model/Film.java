@@ -9,9 +9,6 @@ import java.time.LocalDate;
 
 @Data
 public class Film {
-    public static final LocalDate EARLIEST_RELEASE_DATE =
-            LocalDate.of(1895, 12, 28);
-
     private int id;
 
     @NotBlank(message = "Название фильма не может быть пустым.")

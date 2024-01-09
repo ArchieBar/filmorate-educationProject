@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -96,7 +97,7 @@ class FilmControllerTest {
         Film beforeEarliestReleaseDataFilm = new Film("beforeEarliestReleaseDataFilm", "Новое_Описание_1",
                 "1850-01-01", 100);
         Film earliestReleaseDataFilm = new Film("earliestReleaseDataFilm", "Новое_Описание_1",
-                Film.EARLIEST_RELEASE_DATE.toString(), 100);
+                LocalDate.of(1895, 12, 28).toString(), 100);
         Film afterEarliestReleaseDataFilm = new Film("afterEarliestReleaseDataFilm", "Новое_Описание_1",
                 "2000-01-01", 100);
 
@@ -106,7 +107,7 @@ class FilmControllerTest {
         filmController.createFilm(afterEarliestReleaseDataFilm);
 
         assertEquals("Дата релиза фильма не может быть раньше " +
-                Film.EARLIEST_RELEASE_DATE.format(DateTimeFormatter.ISO_DATE),
+                        LocalDate.of(1895, 12, 28).format(DateTimeFormatter.ISO_DATE),
                 beforeEarliestReleaseDataException.getMessage());
         assertEquals(2, filmController.getAllFilm().size());
     }
