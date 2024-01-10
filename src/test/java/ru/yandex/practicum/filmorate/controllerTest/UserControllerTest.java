@@ -2,21 +2,27 @@ package ru.yandex.practicum.filmorate.controllerTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class UserControllerTest {
-
     UserController userController;
+    Validator validator;
 
     @BeforeEach
-    void setUp() {
+    void sutUp() {
         userController = new UserController();
+        validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
     @Test
@@ -59,24 +65,16 @@ class UserControllerTest {
         User emailWithoutChar = new User("emailemail.ru", "login", "name", "2000-01-01");
         User emailBlank = new User(" ", "login", "name", "2000-01-01");
         User emailEmpty = new User(null, "login", "name", "2000-01-01");
-        User emailNormalUser = new User("email@mail.ru", "login", "name", "2000-01-01");
+        User emailBadChar = new User("emailMail.ru@", "login", "name", "2000-01-01");
+        User emailNormal = new User("email@mail.ru", "login", "name", "2000-01-01");
 
-        final ValidationException exceptionEmailWithoutChar = assertThrows(ValidationException.class,
-                () -> userController.createUser(emailWithoutChar));
-        final ValidationException exceptionEmailEmpty = assertThrows(ValidationException.class,
-                () -> userController.createUser(emailEmpty));
-        final ValidationException exceptionEmailBlank = assertThrows(ValidationException.class,
-                () -> userController.createUser(emailBlank));
-        userController.createUser(emailNormalUser);
+        ResponseEntity<Object> responseEmailNormal = userController.createUser(emailNormal);
 
-        assertEquals("Email адрес не может быть пустым и должен содержать \"@\"",
-                exceptionEmailWithoutChar.getMessage());
-        assertEquals("Email адрес не может быть пустым и должен содержать \"@\"",
-                exceptionEmailEmpty.getMessage());
-        assertEquals("Email адрес не может быть пустым и должен содержать \"@\"",
-                exceptionEmailBlank.getMessage());
-        assertEquals(1, userController.getAllUsers().size());
-        assertEquals(emailNormalUser, userController.getAllUsers().get(0));
+        assertFalse(validator.validate(emailWithoutChar).isEmpty());
+        assertFalse(validator.validate(emailBlank).isEmpty());
+        assertFalse(validator.validate(emailEmpty).isEmpty());
+        assertFalse(validator.validate(emailBadChar).isEmpty());
+        assertEquals(HttpStatus.OK, responseEmailNormal.getStatusCode());
     }
 
     @Test
@@ -85,19 +83,9 @@ class UserControllerTest {
         User loginBlank = new User("email@mail.ru", " ", "name", "2000-01-01");
         User loginEmpty = new User("email@mail.ru", "", "name", "2000-01-01");
 
-        final ValidationException exceptionLoginNull = assertThrows(ValidationException.class,
-                () -> userController.createUser(loginNull));
-        final ValidationException exceptionLoginBlank = assertThrows(ValidationException.class,
-                () -> userController.createUser(loginBlank));
-        final ValidationException exceptionLoginEmpty = assertThrows(ValidationException.class,
-                () -> userController.createUser(loginEmpty));
-
-        assertEquals("Логин не может быть пустым и содержать пробелы",
-                exceptionLoginNull.getMessage());
-        assertEquals("Логин не может быть пустым и содержать пробелы",
-                exceptionLoginBlank.getMessage());
-        assertEquals("Логин не может быть пустым и содержать пробелы",
-                exceptionLoginEmpty.getMessage());
+        assertFalse(validator.validate(loginNull).isEmpty());
+        assertFalse(validator.validate(loginBlank).isEmpty());
+        assertFalse(validator.validate(loginEmpty).isEmpty());
     }
 
     @Test
@@ -121,12 +109,11 @@ class UserControllerTest {
         User normalBirthday = new User("normalBirthday@mail.ru", "login", "name", "2000-01-01");
         User futureBirthday = new User("futureBirthday@mail.ru", "login", "name", "3000-01-01");
 
-        userController.createUser(nowBirthday);
-        final ValidationException exceptionFutureBirthday = assertThrows(ValidationException.class,
-                () -> userController.createUser(futureBirthday));
-        userController.createUser(normalBirthday);
+        ResponseEntity<Object> responseNowBirthday = userController.createUser(nowBirthday);
+        ResponseEntity<Object> responseNormalBirthday = userController.createUser(normalBirthday);
 
-        assertEquals("Дата рождения не может быть в будущем.", exceptionFutureBirthday.getMessage());
-        assertEquals(2, userController.getAllUsers().size());
+        assertFalse(validator.validate(futureBirthday).isEmpty());
+        assertEquals(HttpStatus.OK, responseNowBirthday.getStatusCode());
+        assertEquals(HttpStatus.OK, responseNormalBirthday.getStatusCode());
     }
 }

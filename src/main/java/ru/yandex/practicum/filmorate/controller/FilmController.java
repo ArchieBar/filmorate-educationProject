@@ -1,8 +1,10 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -18,6 +20,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
+    private final Gson gson = new Gson();
     private final LocalDate earliestReleaseDate =
             LocalDate.of(1895, 12, 28);
     private int id = 1;
@@ -28,60 +31,48 @@ public class FilmController {
     }
 
     @GetMapping
-    public List<Film> getAllFilm() {
+    public List<Film> getAllFilms() {
         return List.copyOf(films.values());
     }
 
     @PostMapping
-    public ResponseEntity<Film> createFilm(@Valid @RequestBody Film film) throws ValidationException {
-        log.info("Вызов POST /films");
-        if (checkValidityFilm(film)) {
-            return new ResponseEntity<>(film, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Object> createFilm(@Valid @RequestBody Film film) {
+        log.info("Вызов POST /films: " + film);
+        validateReleaseDataFilm(film);
         film.setId(createId());
         films.put(film.getId(), film);
         return new ResponseEntity<>(film, HttpStatus.OK);
     }
 
     @PutMapping
-    public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) throws ValidationException {
-        log.info("Вызов PUT /films");
-        if (checkValidityFilm(film)) {
-            return new ResponseEntity<>(film, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Object> updateFilm(@Valid @RequestBody Film film) {
+        log.info("Вызов PUT /films: " + film);
+        validateReleaseDataFilm(film);
         if (!films.containsKey(film.getId())) {
-            return new ResponseEntity<>(film, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(gson.toJson("Фильм c id: " + film.getId() + " не найден"),
+                    HttpStatus.NOT_FOUND);
         }
         films.put(film.getId(), film);
         return new ResponseEntity<>(film, HttpStatus.OK);
     }
 
-    private boolean checkValidityFilm(Film film) throws ValidationException {
-        boolean flag = false;
-        if (film.getName() == null || film.getName().isBlank()) {
-            flag = true;
-            log.debug("Название фильма пустое: " + film);
-            throw new ValidationException("Название фильма не может быть пустым.");
-        }
-        if (film.getDescription().length() > 200) {
-            flag = true;
-            log.debug("Описание фильма больше 200 символов. Количество символов: " + film.getDescription().length() +
-                    "Фильм: " + film);
-            throw new ValidationException("Описание фильма не может быть больше 200 символов. " +
-                    "Символов: " + film.getDescription().length());
-        }
+    @ExceptionHandler(ValidationException.class)
+    private ResponseEntity<Object> handleValidationException(ValidationException exception) {
+        return new ResponseEntity<>(gson.toJson("Ошибка валидации: " + exception.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    private ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        return new ResponseEntity<>(gson.toJson("Ошибка валидации: " + exception.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    private void validateReleaseDataFilm(Film film) throws ValidationException {
         if (film.getReleaseDate().isBefore(earliestReleaseDate)) {
-            flag = true;
             log.debug("Дата релиза фильма раньше " + earliestReleaseDate +
                     ": " + film);
             throw new ValidationException("Дата релиза фильма не может быть раньше " + earliestReleaseDate.format(DateTimeFormatter.ISO_DATE));
         }
-        if (film.getDuration() < 0) {
-            flag = true;
-            log.debug("Продолжительность фильма отрицательная: " + film.getDuration());
-            throw new ValidationException("Продолжительность фильма должна быть положительной. " +
-                    "Продолжительность: " + film.getDuration());
-        }
-        return flag;
     }
 }
