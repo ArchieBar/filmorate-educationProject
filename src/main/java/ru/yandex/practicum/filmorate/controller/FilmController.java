@@ -57,13 +57,13 @@ public class FilmController {
     }
 
     @ExceptionHandler(ValidationException.class)
-    private ResponseEntity<Object> handleValidationException(ValidationException exception) {
+    private ResponseEntity<String> handleValidationException(ValidationException exception) {
         return new ResponseEntity<>(gson.toJson("Ошибка валидации: " + exception.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    private ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    private ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         return new ResponseEntity<>(gson.toJson("Ошибка валидации: " + exception.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }

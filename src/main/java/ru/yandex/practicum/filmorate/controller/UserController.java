@@ -56,14 +56,14 @@ public class UserController {
     }
 
     @ExceptionHandler(ValidationException.class)
-    private ResponseEntity<Object> handleValidationException(ValidationException exception) {
+    private ResponseEntity<String> handleValidationException(ValidationException exception) {
         log.debug("Ошибка валидации: " + exception.getMessage());
         return new ResponseEntity<>(gson.toJson("Ошибка валидации: " + exception.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    private ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    private ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         log.debug("Ошибка валидации в аннотациях: " + exception.getMessage());
         return new ResponseEntity<>(gson.toJson("Ошибка валидации: " + exception.getMessage()),
                 HttpStatus.BAD_REQUEST);
