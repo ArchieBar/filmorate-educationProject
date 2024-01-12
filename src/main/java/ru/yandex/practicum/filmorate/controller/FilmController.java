@@ -1,6 +1,9 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +23,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final Gson gson = new Gson();
     private final LocalDate earliestReleaseDate =
             LocalDate.of(1895, 12, 28);
     private int id = 1;
     private final Map<Integer, Film> films = new HashMap<>();
+    private final ObjectMapper mapper;
+
+    public FilmController(ObjectMapper mapper) {
+        this.mapper= mapper;
+    }
 
     private int createId() {
         return id++;
@@ -36,35 +43,37 @@ public class FilmController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createFilm(@Valid @RequestBody Film film) {
+    public ResponseEntity<Film> createFilm(@Valid @RequestBody Film film) {
         log.info("Вызов POST /films: " + film);
         validateReleaseDataFilm(film);
+        if (films.containsKey(film.getId())) {
+            throw new ValidationException("Фильм с id: " + " уже добавлен");
+        }
         film.setId(createId());
         films.put(film.getId(), film);
         return new ResponseEntity<>(film, HttpStatus.OK);
     }
 
     @PutMapping
-    public ResponseEntity<Object> updateFilm(@Valid @RequestBody Film film) {
+    public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
         log.info("Вызов PUT /films: " + film);
         validateReleaseDataFilm(film);
         if (!films.containsKey(film.getId())) {
-            return new ResponseEntity<>(gson.toJson("Фильм c id: " + film.getId() + " не найден"),
-                    HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(film, HttpStatus.NOT_FOUND);
         }
         films.put(film.getId(), film);
         return new ResponseEntity<>(film, HttpStatus.OK);
     }
 
     @ExceptionHandler(ValidationException.class)
-    private ResponseEntity<String> handleValidationException(ValidationException exception) {
-        return new ResponseEntity<>(gson.toJson("Ошибка валидации: " + exception.getMessage()),
+    private ResponseEntity<String> handleValidationException(ValidationException exception) throws JsonProcessingException {
+        return new ResponseEntity<>(mapper.writeValueAsString("Ошибка валидации: " + exception.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    private ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        return new ResponseEntity<>(gson.toJson("Ошибка валидации: " + exception.getMessage()),
+    private ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) throws JsonProcessingException {
+        return new ResponseEntity<>(mapper.writeValueAsString("Ошибка валидации: " + exception.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 

@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final Gson gson = new Gson();
     private final Map<Integer, User> users = new HashMap<>();
     private int id = 1;
+    private final ObjectMapper mapper;
+
+    public UserController (ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     private int createId() {
         return id++;
@@ -32,11 +37,11 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         log.info("Вызов POST /users: " + user);
         validateUserName(user);
         if (users.containsKey(user.getId())) {
-            throw new ValidationException("Пользователь с email адресом: " + user.getEmail() + " уже зарегистрирован");
+            throw new ValidationException("Пользователь с id: " + user.getId() + " уже зарегистрирован");
         }
         user.setId(createId());
         users.put(user.getId(), user);
@@ -44,28 +49,29 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<Object> updateUser(@Valid @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
         log.info("Вызов PUT /users: " + user);
         validateUserName(user);
         if (!users.containsKey(user.getId())) {
-            return new ResponseEntity<>(gson.toJson("Пользователь c id: " + user.getId() + " не найден"),
-                    HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(user, HttpStatus.NOT_FOUND);
         }
         users.put(user.getId(), user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @ExceptionHandler(ValidationException.class)
-    private ResponseEntity<String> handleValidationException(ValidationException exception) {
+    private ResponseEntity<String> handleValidationException(ValidationException exception)
+            throws JsonProcessingException {
         log.debug("Ошибка валидации: " + exception.getMessage());
-        return new ResponseEntity<>(gson.toJson("Ошибка валидации: " + exception.getMessage()),
+        return new ResponseEntity<>(mapper.writeValueAsString("Ошибка валидации: " + exception.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    private ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    private ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception)
+            throws JsonProcessingException {
         log.debug("Ошибка валидации в аннотациях: " + exception.getMessage());
-        return new ResponseEntity<>(gson.toJson("Ошибка валидации: " + exception.getMessage()),
+        return new ResponseEntity<>(mapper.writeValueAsString("Ошибка валидации: " + exception.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 

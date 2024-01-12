@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controllerTest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ class FilmControllerTest {
 
     @BeforeEach
     public void setUp() {
-        filmController = new FilmController();
+        filmController = new FilmController(new ObjectMapper());
         validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
@@ -83,7 +84,7 @@ class FilmControllerTest {
                         "ОписаниеРовно200СимволовОписаниеРовно200СимволовОписание",
                 "2000-01-01", 100);
 
-        ResponseEntity<Object> responseFilmDescription200Char = filmController.createFilm(filmDescription200Char);
+        ResponseEntity<Film> responseFilmDescription200Char = filmController.createFilm(filmDescription200Char);
 
         assertFalse(validator.validate(filmDescription201Char).isEmpty());
         assertFalse(validator.validate(filmDescriptionMore200Char).isEmpty());
@@ -103,9 +104,9 @@ class FilmControllerTest {
 
         final ValidationException exceptionBeforeEarliestReleaseDataFilm = assertThrows(ValidationException.class,
                 () -> filmController.createFilm(beforeEarliestReleaseDataFilm));
-        ResponseEntity<Object> responseEarliestReleaseDataFilm =
+        ResponseEntity<Film> responseEarliestReleaseDataFilm =
                 filmController.createFilm(earliestReleaseDataFilm);
-        ResponseEntity<Object> responseAfterEarliestReleaseDataFilm =
+        ResponseEntity<Film> responseAfterEarliestReleaseDataFilm =
                 filmController.createFilm(afterEarliestReleaseDataFilm);
 
         assertTrue(validator.validate(beforeEarliestReleaseDataFilm).isEmpty());
@@ -126,8 +127,8 @@ class FilmControllerTest {
         Film filmNormalDuration = new Film("filmNormalDuration",
                 "Описание_1", "2000-01-01", 100);
 
-        ResponseEntity<Object> responseFilmZeroDuration = filmController.createFilm(filmZeroDuration);
-        ResponseEntity<Object> responseFilmNormalDuration = filmController.createFilm(filmNormalDuration);
+        ResponseEntity<Film> responseFilmZeroDuration = filmController.createFilm(filmZeroDuration);
+        ResponseEntity<Film> responseFilmNormalDuration = filmController.createFilm(filmNormalDuration);
 
         assertFalse(validator.validate(filmNegativeDuration).isEmpty());
         assertEquals(HttpStatus.OK, responseFilmNormalDuration.getStatusCode());

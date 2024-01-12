@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controllerTest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ class UserControllerTest {
 
     @BeforeEach
     void sutUp() {
-        userController = new UserController();
+        userController = new UserController(new ObjectMapper());
         validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
@@ -68,7 +69,7 @@ class UserControllerTest {
         User emailBadChar = new User("emailMail.ru@", "login", "name", "2000-01-01");
         User emailNormal = new User("email@mail.ru", "login", "name", "2000-01-01");
 
-        ResponseEntity<Object> responseEmailNormal = userController.createUser(emailNormal);
+        ResponseEntity<User> responseEmailNormal = userController.createUser(emailNormal);
 
         assertFalse(validator.validate(emailWithoutChar).isEmpty());
         assertFalse(validator.validate(emailBlank).isEmpty());
@@ -109,8 +110,8 @@ class UserControllerTest {
         User normalBirthday = new User("normalBirthday@mail.ru", "login", "name", "2000-01-01");
         User futureBirthday = new User("futureBirthday@mail.ru", "login", "name", "3000-01-01");
 
-        ResponseEntity<Object> responseNowBirthday = userController.createUser(nowBirthday);
-        ResponseEntity<Object> responseNormalBirthday = userController.createUser(normalBirthday);
+        ResponseEntity<User> responseNowBirthday = userController.createUser(nowBirthday);
+        ResponseEntity<User> responseNormalBirthday = userController.createUser(normalBirthday);
 
         assertFalse(validator.validate(futureBirthday).isEmpty());
         assertEquals(HttpStatus.OK, responseNowBirthday.getStatusCode());
