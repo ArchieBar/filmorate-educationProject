@@ -12,7 +12,7 @@ public class User {
     private int id;
 
     @NotBlank(message = "Email адрес не может быть пустым")
-    @Email(message = "Email адрес должен быть формата: \"email@email.email\"")
+    @Email(message = "Email адрес должен быть формата: \"example@gmail.com\"")
     private String email;
 
     @NotBlank(message = "Login пользователя не может быть пустым")

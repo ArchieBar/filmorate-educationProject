@@ -65,18 +65,6 @@ public class FilmController {
         return new ResponseEntity<>(film, HttpStatus.OK);
     }
 
-    @ExceptionHandler(ValidationException.class)
-    private ResponseEntity<String> handleValidationException(ValidationException exception) throws JsonProcessingException {
-        return new ResponseEntity<>(mapper.writeValueAsString("Ошибка валидации: " + exception.getMessage()),
-                HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    private ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) throws JsonProcessingException {
-        return new ResponseEntity<>(mapper.writeValueAsString("Ошибка валидации: " + exception.getMessage()),
-                HttpStatus.BAD_REQUEST);
-    }
-
     private void validateReleaseDataFilm(Film film) throws ValidationException {
         if (film.getReleaseDate().isBefore(earliestReleaseDate)) {
             log.debug("Дата релиза фильма раньше " + earliestReleaseDate +

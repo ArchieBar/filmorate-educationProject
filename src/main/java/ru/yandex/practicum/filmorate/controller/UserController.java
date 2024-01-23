@@ -59,22 +59,6 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @ExceptionHandler(ValidationException.class)
-    private ResponseEntity<String> handleValidationException(ValidationException exception)
-            throws JsonProcessingException {
-        log.debug("Ошибка валидации: " + exception.getMessage());
-        return new ResponseEntity<>(mapper.writeValueAsString("Ошибка валидации: " + exception.getMessage()),
-                HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    private ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception)
-            throws JsonProcessingException {
-        log.debug("Ошибка валидации в аннотациях: " + exception.getMessage());
-        return new ResponseEntity<>(mapper.writeValueAsString("Ошибка валидации: " + exception.getMessage()),
-                HttpStatus.BAD_REQUEST);
-    }
-
     private void validateUserName(User user) throws ValidationException {
         if (user.getName() == null || user.getName().isBlank()) {
             log.debug("Пустое имя, установлен логин вместо имени: " + user);
