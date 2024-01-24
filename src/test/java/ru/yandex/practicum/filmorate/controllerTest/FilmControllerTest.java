@@ -1,13 +1,12 @@
 package ru.yandex.practicum.filmorate.controllerTest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -21,7 +20,7 @@ class FilmControllerTest {
 
     @BeforeEach
     public void setUp() {
-        filmController = new FilmController(new ObjectMapper());
+        filmController = new FilmController(new InMemoryFilmStorage());
         validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
@@ -84,13 +83,13 @@ class FilmControllerTest {
                         "ОписаниеРовно200СимволовОписаниеРовно200СимволовОписание",
                 "2000-01-01", 100);
 
-        ResponseEntity<Film> responseFilmDescription200Char = filmController.createFilm(filmDescription200Char);
+        Film responseFilmDescription200Char = filmController.createFilm(filmDescription200Char);
 
         assertFalse(validator.validate(filmDescription201Char).isEmpty());
         assertFalse(validator.validate(filmDescriptionMore200Char).isEmpty());
 
         assertTrue(validator.validate(filmDescription200Char).isEmpty());
-        assertEquals(HttpStatus.OK, responseFilmDescription200Char.getStatusCode());
+        assertEquals(filmDescription200Char, responseFilmDescription200Char);
     }
 
     @Test
@@ -104,9 +103,9 @@ class FilmControllerTest {
 
         final ValidationException exceptionBeforeEarliestReleaseDataFilm = assertThrows(ValidationException.class,
                 () -> filmController.createFilm(beforeEarliestReleaseDataFilm));
-        ResponseEntity<Film> responseEarliestReleaseDataFilm =
+        Film responseEarliestReleaseDataFilm =
                 filmController.createFilm(earliestReleaseDataFilm);
-        ResponseEntity<Film> responseAfterEarliestReleaseDataFilm =
+        Film responseAfterEarliestReleaseDataFilm =
                 filmController.createFilm(afterEarliestReleaseDataFilm);
 
         assertTrue(validator.validate(beforeEarliestReleaseDataFilm).isEmpty());
@@ -114,8 +113,8 @@ class FilmControllerTest {
         assertTrue(validator.validate(afterEarliestReleaseDataFilm).isEmpty());
         assertEquals("Дата релиза фильма не может быть раньше 1895-12-28",
                 exceptionBeforeEarliestReleaseDataFilm.getMessage());
-        assertEquals(HttpStatus.OK, responseEarliestReleaseDataFilm.getStatusCode());
-        assertEquals(HttpStatus.OK, responseAfterEarliestReleaseDataFilm.getStatusCode());
+        assertEquals(earliestReleaseDataFilm, responseEarliestReleaseDataFilm);
+        assertEquals(afterEarliestReleaseDataFilm, responseAfterEarliestReleaseDataFilm);
     }
 
     @Test
@@ -127,11 +126,11 @@ class FilmControllerTest {
         Film filmNormalDuration = new Film("filmNormalDuration",
                 "Описание_1", "2000-01-01", 100);
 
-        ResponseEntity<Film> responseFilmZeroDuration = filmController.createFilm(filmZeroDuration);
-        ResponseEntity<Film> responseFilmNormalDuration = filmController.createFilm(filmNormalDuration);
+        Film responseFilmZeroDuration = filmController.createFilm(filmZeroDuration);
+        Film responseFilmNormalDuration = filmController.createFilm(filmNormalDuration);
 
         assertFalse(validator.validate(filmNegativeDuration).isEmpty());
-        assertEquals(HttpStatus.OK, responseFilmNormalDuration.getStatusCode());
-        assertEquals(HttpStatus.OK, responseFilmZeroDuration.getStatusCode());
+        assertEquals(filmZeroDuration, responseFilmZeroDuration);
+        assertEquals(filmNormalDuration, responseFilmNormalDuration);
     }
 }

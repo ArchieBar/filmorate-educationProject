@@ -6,10 +6,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class Film {
-
     private int id;
 
     @NotBlank(message = "Название фильма не может быть пустым.")
@@ -23,10 +24,25 @@ public class Film {
     @Positive
     private int duration;
 
+    private Set<Integer> likes;
+
     public Film(String name, String description, String releaseDate, int duration) {
         this.name = name;
         this.description = description;
         this.releaseDate = LocalDate.parse(releaseDate);
         this.duration = duration;
+        this.likes = new HashSet<>();
+    }
+
+    public int getCountLikes() {
+        return likes.size();
+    }
+
+    public void setLike(Integer userId) {
+        likes.add(userId);
+    }
+
+    public void removeLike(Integer userId) {
+        likes.remove(userId);
     }
 }

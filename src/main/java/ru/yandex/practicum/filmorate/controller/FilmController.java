@@ -1,75 +1,73 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final LocalDate earliestReleaseDate =
-            LocalDate.of(1895, 12, 28);
-    private int id = 1;
-    private final Map<Integer, Film> films = new HashMap<>();
-    private final ObjectMapper mapper;
+    private final FilmStorage filmStorage;
+    private final FilmService filmService;
 
-    public FilmController(ObjectMapper mapper) {
-        this.mapper= mapper;
+    //FIXME
+    // С этим есть небольшие вопросы
+    @Autowired
+    public FilmController(FilmStorage filmStorage) {
+        this.filmStorage = filmStorage;
+        this.filmService = new FilmService(filmStorage);
     }
 
-    private int createId() {
-        return id++;
+    @GetMapping("/{filmId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Film getFilmById(@PathVariable Integer filmId) {
+        return filmStorage.findFilmById(filmId);
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<Film> getAllFilms() {
-        return List.copyOf(films.values());
+        return filmStorage.getAllFilm();
+    }
+
+    @GetMapping("/popular")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
+        return filmService.getPopularFilms(count);
     }
 
     @PostMapping
-    public ResponseEntity<Film> createFilm(@Valid @RequestBody Film film) {
-        log.info("Вызов POST /films: " + film);
-        validateReleaseDataFilm(film);
-        if (films.containsKey(film.getId())) {
-            throw new ValidationException("Фильм с id: " + " уже добавлен");
-        }
-        film.setId(createId());
-        films.put(film.getId(), film);
-        return new ResponseEntity<>(film, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Film createFilm(@Valid @RequestBody Film film) {
+        return filmStorage.createFilm(film);
     }
 
     @PutMapping
-    public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
-        log.info("Вызов PUT /films: " + film);
-        validateReleaseDataFilm(film);
-        if (!films.containsKey(film.getId())) {
-            return new ResponseEntity<>(film, HttpStatus.NOT_FOUND);
-        }
-        films.put(film.getId(), film);
-        return new ResponseEntity<>(film, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public Film updateFilm(@Valid @RequestBody Film film) {
+        return filmStorage.updateFilm(film);
     }
 
-    private void validateReleaseDataFilm(Film film) throws ValidationException {
-        if (film.getReleaseDate().isBefore(earliestReleaseDate)) {
-            log.debug("Дата релиза фильма раньше " + earliestReleaseDate +
-                    ": " + film);
-            throw new ValidationException("Дата релиза фильма не может быть раньше " + earliestReleaseDate.format(DateTimeFormatter.ISO_DATE));
-        }
+    @PutMapping("/{filmId}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Integer> addFilmLike(@PathVariable Map<String, String> pathId) {
+        Integer filmId = Integer.parseInt(pathId.get("filmId"));
+        Integer userid = Integer.parseInt(pathId.get("userId"));
+        return filmService.addLike(filmId, userid);
+    }
+
+    @DeleteMapping("/{filmId}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Integer> deleteLike(@PathVariable Map<String, String> pathId) {
+        Integer filmId = Integer.parseInt(pathId.get("filmId"));
+        Integer userid = Integer.parseInt(pathId.get("userId"));
+        return filmService.deleteLike(filmId, userid);
     }
 }
