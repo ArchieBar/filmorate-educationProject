@@ -28,19 +28,19 @@ class InMemoryFilmStorageTest {
     }
 
     @Test
-    void getAllFilm() {
+    void theCorrectListOfMoviesShouldBeReturned() {
         assertEquals(3, filmStorage.getAllFilm().size());
     }
 
     @Test
-    void createFilm() {
+    void theFilmMustBeCreatedCorrectly() {
         assertEquals(film1, filmStorage.findFilmById(1));
         assertEquals(film2, filmStorage.findFilmById(2));
         assertEquals(film3, filmStorage.findFilmById(3));
     }
 
     @Test
-    void updateFilm() {
+    void theFilmMustBeUpdatingCorrectly() {
         Film newFilm = new Film("nameNew", "descriptionNew", "2001-01-01", 111);
         newFilm.setId(1);
 
@@ -48,4 +48,7 @@ class InMemoryFilmStorageTest {
 
         assertEquals(newFilm, filmStorage.findFilmById(1));
     }
+
+    //TODO
+    // Добавить тесты на провал валидации
 }

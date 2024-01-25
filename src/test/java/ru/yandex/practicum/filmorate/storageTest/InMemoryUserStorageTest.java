@@ -29,19 +29,19 @@ class InMemoryUserStorageTest {
 
 
     @Test
-    void getAllUser() {
+    void theCorrectListOfUsersShouldBeReturned() {
         assertEquals(3, userStorage.getAllUser().size());
     }
 
     @Test
-    void createUser() {
+    void theUsersMustBeCreatedCorrectly() {
         assertEquals(user1, userStorage.findUserByID(1));
         assertEquals(user2, userStorage.findUserByID(2));
         assertEquals(user3, userStorage.findUserByID(3));
     }
 
     @Test
-    void updateUser() {
+    void theUsersMustBeUpdatingCorrectly() {
         User newUser = new User("example@gmail.com", "loginNew", "nameNew", "2001-01-01");
         newUser.setId(1);
 
@@ -49,4 +49,7 @@ class InMemoryUserStorageTest {
 
         assertEquals(newUser, userStorage.findUserByID(1));
     }
+
+    //TODO
+    // Добавить тесты на провал валидации
 }

@@ -42,7 +42,7 @@ class FilmServiceTest {
     }
 
     @Test
-    void addLike() {
+    void checkingForCorrectnessOfAddingLikes() {
         filmService.addLike(1, 1);
         filmService.addLike(2, 1);
         filmService.addLike(2, 2);
@@ -56,7 +56,7 @@ class FilmServiceTest {
     }
 
     @Test
-    void deleteLike() {
+    void checkingForCorrectnessOfDeletingLikes() {
         filmService.addLike(1, 1);
         filmService.addLike(2, 1);
         filmService.addLike(2, 2);
@@ -74,7 +74,7 @@ class FilmServiceTest {
     }
 
     @Test
-    void getPopularFilms() {
+    void theCorrectListOfPopularMoviesShouldBeReturned() {
         filmService.addLike(1, 1);
         filmService.addLike(2, 1);
         filmService.addLike(2, 2);
@@ -88,4 +88,7 @@ class FilmServiceTest {
         assertEquals(filmService.findFilmById(2), popFilmList.get(1));
         assertEquals(filmService.findFilmById(1), popFilmList.get(2));
     }
+
+    //TODO
+    // Добавить тесты на провал валидации
 }

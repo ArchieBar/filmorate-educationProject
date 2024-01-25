@@ -25,7 +25,7 @@ class UserServiceTest {
     }
 
     @Test
-    void addFriend() {
+    void checkingForCorrectnessOfAddingFriends() {
         userService.addFriend(1, 2);
         userService.addFriend(2, 3);
         userService.addFriend(3, 1);
@@ -36,7 +36,7 @@ class UserServiceTest {
     }
 
     @Test
-    void deleteFriend() {
+    void checkingForCorrectnessOfDeletingFriends() {
         userService.addFriend(1, 2);
         userService.addFriend(2, 3);
         userService.addFriend(3, 1);
@@ -50,7 +50,7 @@ class UserServiceTest {
     }
 
     @Test
-    void findMutualFriends() {
+    void theCorrectListOfMutualFriendsShouldBeReturned() {
         userService.addFriend(1, 3);
         userService.addFriend(2, 3);
 
@@ -58,4 +58,7 @@ class UserServiceTest {
 
         assertEquals(3, mutualFriend);
     }
+
+    //TODO
+    // Добавить тесты на провал валидации
 }
