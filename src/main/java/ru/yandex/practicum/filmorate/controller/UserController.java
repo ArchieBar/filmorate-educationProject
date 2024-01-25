@@ -1,34 +1,31 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final UserStorage userStorage;
     private final UserService userService;
 
-    //FIXME
-    // С этим есть небольшие вопросы
     @Autowired
-    public UserController(UserStorage userStorage) {
-        this.userStorage = userStorage;
-        this.userService = new UserService(userStorage);
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public User getUserById(@PathVariable Integer userId) {
-        return userStorage.findUserByID(userId);
+        return userService.findUserByID(userId);
     }
 
     @GetMapping("/{userId}/friends")
@@ -48,24 +45,27 @@ public class UserController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers() {
-        return userStorage.getAllUser();
+        return userService.getAllUser();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User createUser(@Valid @RequestBody User user) {
-        return userStorage.createUser(user);
+        log.info("Вызов метода POST: /createUser - " + user);
+        return userService.createUser(user);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public User updateUser(@Valid @RequestBody User user) {
-        return userStorage.updateUser(user);
+        log.info("Вызов метода PUT: /updateUser - " + user);
+        return userService.updateUser(user);
     }
 
     @PutMapping("/{userId}/friends/{otherUserId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<User> addFriends(@PathVariable Map<String, String> pathUserId) {
+    public List<User> addFriend(@PathVariable Map<String, String> pathUserId) {
+        log.info("Вызов метода PUT: /addFriend - " + pathUserId);
         Integer userId = Integer.parseInt(pathUserId.get("userId"));
         Integer otherUserId = Integer.parseInt(pathUserId.get("otherUserId"));
         return userService.addFriend(userId, otherUserId);
@@ -74,6 +74,7 @@ public class UserController {
     @DeleteMapping("/{userId}/friends/{otherUserId}")
     @ResponseStatus(HttpStatus.OK)
     public List<User> deleteFriend(@PathVariable Map<String, String> pathUserId) {
+        log.info("Вызов метода DELETE: /deleteFriend - " + pathUserId);
         Integer userId = Integer.parseInt(pathUserId.get("userId"));
         Integer otherUserId = Integer.parseInt(pathUserId.get("otherUserId"));
         return userService.deleteFriend(userId, otherUserId);

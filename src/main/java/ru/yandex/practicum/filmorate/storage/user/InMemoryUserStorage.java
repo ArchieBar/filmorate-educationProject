@@ -24,16 +24,11 @@ public class InMemoryUserStorage implements UserStorage {
         return id++;
     }
 
-    private void validateUserName(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            log.debug("Пустое имя, установлен логин вместо имени: " + user);
-            user.setName(user.getLogin());
-        }
-    }
-
     @Override
     public User findUserByID(Integer userId) {
        if (!users.containsKey(userId)) {
+           log.debug(MessageFormat.format("Пользователь с id: {0} не найден", userId) +
+                   "\n" + users);
             throw new UserNotFountException(MessageFormat.format("Пользователь с id: {0} не найден", userId));
         }
         return users.get(userId);
@@ -46,9 +41,10 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User createUser(User user) {
-        log.info("Вызов POST /users: " + user);
-        validateUserName(user);
+        log.info("Вызов метода /createUser - " + user);
         if (users.containsKey(user.getId())) {
+            log.debug(MessageFormat.format("Пользователь с id: {0} уже зарегистрирован", user.getId()) +
+                    "\n" + users);
             throw new ValidationException(
                     MessageFormat.format("Пользователь с id: {0} уже зарегистрирован", user.getId()));
         }
@@ -59,12 +55,8 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        log.info("Вызов PUT /users: " + user);
-        validateUserName(user);
-        if (!users.containsKey(user.getId())) {
-            throw new UserNotFountException(
-                    MessageFormat.format("Пользователь с id: {0} не найден", user.getId()));
-        }
+        log.info("Вызов метода /updateUser - " + user);
+        findUserByID(user.getId());
         users.put(user.getId(), user);
         return user;
     }

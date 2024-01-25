@@ -1,40 +1,37 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmStorage filmStorage;
     private final FilmService filmService;
 
-    //FIXME
-    // С этим есть небольшие вопросы
     @Autowired
-    public FilmController(FilmStorage filmStorage) {
-        this.filmStorage = filmStorage;
-        this.filmService = new FilmService(filmStorage);
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
     @GetMapping("/{filmId}")
     @ResponseStatus(HttpStatus.OK)
     public Film getFilmById(@PathVariable Integer filmId) {
-        return filmStorage.findFilmById(filmId);
+        return filmService.findFilmById(filmId);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<Film> getAllFilms() {
-        return filmStorage.getAllFilm();
+        return filmService.getAllFilm();
     }
 
     @GetMapping("/popular")
@@ -46,18 +43,21 @@ public class FilmController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Film createFilm(@Valid @RequestBody Film film) {
-        return filmStorage.createFilm(film);
+        log.info("Вызов метода POST: /createFilm - " + film);
+        return filmService.createFilm(film);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public Film updateFilm(@Valid @RequestBody Film film) {
-        return filmStorage.updateFilm(film);
+        log.info("Вызов метода PUT: /updateFilm - " + film);
+        return filmService.updateFilm(film);
     }
 
     @PutMapping("/{filmId}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public List<Integer> addFilmLike(@PathVariable Map<String, String> pathId) {
+        log.info("Вызов метода PUT: /addFilmLike - " + pathId);
         Integer filmId = Integer.parseInt(pathId.get("filmId"));
         Integer userid = Integer.parseInt(pathId.get("userId"));
         return filmService.addLike(filmId, userid);
@@ -66,6 +66,7 @@ public class FilmController {
     @DeleteMapping("/{filmId}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public List<Integer> deleteLike(@PathVariable Map<String, String> pathId) {
+        log.info("Вызов метода DELETE: /deleteLike - " + pathId);
         Integer filmId = Integer.parseInt(pathId.get("filmId"));
         Integer userid = Integer.parseInt(pathId.get("userId"));
         return filmService.deleteLike(filmId, userid);

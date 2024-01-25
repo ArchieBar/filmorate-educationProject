@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,16 +13,15 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        UserStorage userStorage = new InMemoryUserStorage();
-        this.userService = new UserService(userStorage);
+        this.userService = new UserService(new InMemoryUserStorage());
 
         User user1 = new User("example@gmail.com", "login1", "name1", "2001-01-01");
         User user2 = new User("example@gmail.com", "login2", "name2", "2002-02-03");
         User user3 = new User("example@gmail.com", "login3", "name3", "2002-03-03");
 
-        userStorage.createUser(user1); // id = 1
-        userStorage.createUser(user2); // id = 2
-        userStorage.createUser(user3); // id = 3
+        userService.createUser(user1); // id = 1
+        userService.createUser(user2); // id = 2
+        userService.createUser(user3); // id = 3
     }
 
     @Test
