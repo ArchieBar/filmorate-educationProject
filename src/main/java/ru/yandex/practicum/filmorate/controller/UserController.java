@@ -1,17 +1,13 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,50 +15,68 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>();
-    private int id = 1;
-    private final ObjectMapper mapper;
+    private final UserService userService;
 
-    public UserController (ObjectMapper mapper) {
-        this.mapper = mapper;
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    private int createId() {
-        return id++;
+    @GetMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public User getUserById(@PathVariable Integer userId) {
+        return userService.findUserByID(userId);
+    }
+
+    @GetMapping("/{userId}/friends")
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> getFriendsUser(@PathVariable Integer userId) {
+        return userService.getFriendsUser(userId);
+    }
+
+    @GetMapping("/{userId}/friends/common/{otherUserId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> getMutualFriends(@PathVariable Map<String, String> pathUserId) {
+        Integer userId = Integer.parseInt(pathUserId.get("userId"));
+        Integer otherUserId = Integer.parseInt(pathUserId.get("otherUserId"));
+        return userService.findMutualFriends(userId, otherUserId);
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers() {
-        return List.copyOf(users.values());
+        return userService.getAllUser();
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        log.info("Вызов POST /users: " + user);
-        validateUserName(user);
-        if (users.containsKey(user.getId())) {
-            throw new ValidationException("Пользователь с id: " + user.getId() + " уже зарегистрирован");
-        }
-        user.setId(createId());
-        users.put(user.getId(), user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.CREATED)
+    public User createUser(@Valid @RequestBody User user) {
+        log.info("Вызов метода POST: /createUser - " + user);
+        return userService.createUser(user);
     }
 
     @PutMapping
-    public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
-        log.info("Вызов PUT /users: " + user);
-        validateUserName(user);
-        if (!users.containsKey(user.getId())) {
-            return new ResponseEntity<>(user, HttpStatus.NOT_FOUND);
-        }
-        users.put(user.getId(), user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public User updateUser(@Valid @RequestBody User user) {
+        log.info("Вызов метода PUT: /updateUser - " + user);
+        return userService.updateUser(user);
     }
 
-    private void validateUserName(User user) throws ValidationException {
-        if (user.getName() == null || user.getName().isBlank()) {
-            log.debug("Пустое имя, установлен логин вместо имени: " + user);
-            user.setName(user.getLogin());
-        }
+    @PutMapping("/{userId}/friends/{otherUserId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> addFriend(@PathVariable Map<String, String> pathUserId) {
+        log.info("Вызов метода PUT: /addFriend - " + pathUserId);
+        Integer userId = Integer.parseInt(pathUserId.get("userId"));
+        Integer otherUserId = Integer.parseInt(pathUserId.get("otherUserId"));
+        return userService.addFriend(userId, otherUserId);
+    }
+
+    @DeleteMapping("/{userId}/friends/{otherUserId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> deleteFriend(@PathVariable Map<String, String> pathUserId) {
+        log.info("Вызов метода DELETE: /deleteFriend - " + pathUserId);
+        Integer userId = Integer.parseInt(pathUserId.get("userId"));
+        Integer otherUserId = Integer.parseInt(pathUserId.get("otherUserId"));
+        return userService.deleteFriend(userId, otherUserId);
     }
 }

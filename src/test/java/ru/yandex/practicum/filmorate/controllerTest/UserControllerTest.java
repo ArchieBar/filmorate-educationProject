@@ -1,13 +1,12 @@
 package ru.yandex.practicum.filmorate.controllerTest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -22,7 +21,7 @@ class UserControllerTest {
 
     @BeforeEach
     void sutUp() {
-        userController = new UserController(new ObjectMapper());
+        userController = new UserController(new UserService(new InMemoryUserStorage()));
         validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
@@ -63,19 +62,19 @@ class UserControllerTest {
 
     @Test
     void ifYouTryToCreateAUserWithIncorrectEmailAnExceptionShouldBeThrown() throws ValidationException {
-        User emailWithoutChar = new User("emailemail.ru", "login", "name", "2000-01-01");
+        User emailWithoutChar = new User("email.ru", "login", "name", "2000-01-01");
         User emailBlank = new User(" ", "login", "name", "2000-01-01");
         User emailEmpty = new User(null, "login", "name", "2000-01-01");
         User emailBadChar = new User("emailMail.ru@", "login", "name", "2000-01-01");
         User emailNormal = new User("email@mail.ru", "login", "name", "2000-01-01");
 
-        ResponseEntity<User> responseEmailNormal = userController.createUser(emailNormal);
+        User responseEmailNormal = userController.createUser(emailNormal);
 
         assertFalse(validator.validate(emailWithoutChar).isEmpty());
         assertFalse(validator.validate(emailBlank).isEmpty());
         assertFalse(validator.validate(emailEmpty).isEmpty());
         assertFalse(validator.validate(emailBadChar).isEmpty());
-        assertEquals(HttpStatus.OK, responseEmailNormal.getStatusCode());
+        assertEquals(emailNormal, responseEmailNormal);
     }
 
     @Test
@@ -110,11 +109,11 @@ class UserControllerTest {
         User normalBirthday = new User("normalBirthday@mail.ru", "login", "name", "2000-01-01");
         User futureBirthday = new User("futureBirthday@mail.ru", "login", "name", "3000-01-01");
 
-        ResponseEntity<User> responseNowBirthday = userController.createUser(nowBirthday);
-        ResponseEntity<User> responseNormalBirthday = userController.createUser(normalBirthday);
+        User responseNowBirthday = userController.createUser(nowBirthday);
+        User responseNormalBirthday = userController.createUser(normalBirthday);
 
         assertFalse(validator.validate(futureBirthday).isEmpty());
-        assertEquals(HttpStatus.OK, responseNowBirthday.getStatusCode());
-        assertEquals(HttpStatus.OK, responseNormalBirthday.getStatusCode());
+        assertEquals(nowBirthday, responseNowBirthday);
+        assertEquals(normalBirthday, responseNormalBirthday);
     }
 }
