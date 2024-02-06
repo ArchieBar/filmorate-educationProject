@@ -1,1 +1,1 @@
-![БД проекта](docs/images/Filmorate_BD.jpeg)
+![БД проекта](docs/images/FilmorateBD.jpeg)
