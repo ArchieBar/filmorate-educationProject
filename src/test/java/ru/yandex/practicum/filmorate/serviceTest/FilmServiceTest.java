@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.serviceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.GenreFilm;
+import ru.yandex.practicum.filmorate.model.RatingFilm;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -24,9 +26,12 @@ class FilmServiceTest {
         this.filmService = new FilmService(new InMemoryFilmStorage(), userStorage);
         this.userService = new UserService(userStorage);
 
-        Film film1 = new Film("name1", "description1", "2001-01-01", 111);
-        Film film2 = new Film("name2", "description2", "2002-02-02", 222);
-        Film film3 = new Film("name3", "description3", "2003-03-03", 333);
+        Film film1 = new Film("name1", "description1", "2001-01-01", 111,
+                GenreFilm.COMEDY, RatingFilm.R);
+        Film film2 = new Film("name2", "description2", "2002-02-02", 222,
+                GenreFilm.COMEDY, RatingFilm.R);
+        Film film3 = new Film("name3", "description3", "2003-03-03", 333,
+                GenreFilm.COMEDY, RatingFilm.R);
 
         User user1 = new User("example@gmail.com", "login1", "name1", "2001-01-01");
         User user2 = new User("example@gmail.com", "login2", "name2", "2002-02-03");

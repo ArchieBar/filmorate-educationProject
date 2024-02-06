@@ -26,12 +26,24 @@ public class Film {
 
     private Set<Integer> likes;
 
-    public Film(String name, String description, String releaseDate, int duration) {
+    private GenreFilm genre;
+
+    private RatingFilm rating;
+
+    public Film(
+            String name,
+            String description,
+            String releaseDate,
+            int duration,
+            GenreFilm genre,
+            RatingFilm rating) {
         this.name = name;
         this.description = description;
         this.releaseDate = LocalDate.parse(releaseDate);
         this.duration = duration;
         this.likes = new HashSet<>();
+        this.genre = genre;
+        this.rating = rating;
     }
 
     public int getCountLikes() {
