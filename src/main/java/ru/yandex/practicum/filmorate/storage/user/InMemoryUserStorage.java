@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.UserNotFountException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.user.User;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -42,22 +42,22 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User createUser(User user) {
         log.info("Вызов метода /createUser - " + user);
-        if (users.containsKey(user.getId())) {
-            log.debug(MessageFormat.format("Пользователь с id: {0} уже зарегистрирован", user.getId()) +
+        if (users.containsKey(user.getId_user())) {
+            log.debug(MessageFormat.format("Пользователь с id: {0} уже зарегистрирован", user.getId_user()) +
                     "\n" + users);
             throw new ValidationException(
-                    MessageFormat.format("Пользователь с id: {0} уже зарегистрирован", user.getId()));
+                    MessageFormat.format("Пользователь с id: {0} уже зарегистрирован", user.getId_user()));
         }
-        user.setId(createId());
-        users.put(user.getId(), user);
+        user.setId_user(createId());
+        users.put(user.getId_user(), user);
         return user;
     }
 
     @Override
     public User updateUser(User user) {
         log.info("Вызов метода /updateUser - " + user);
-        findUserByID(user.getId());
-        users.put(user.getId(), user);
+        findUserByID(user.getId_user());
+        users.put(user.getId_user(), user);
         return user;
     }
 }

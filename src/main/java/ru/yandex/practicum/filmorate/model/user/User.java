@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.model.user;
 
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Data
 public class User {
-    private int id;
+    private int id_user;
 
     @NotBlank(message = "Email адрес не может быть пустым")
     @Email(message = "Email адрес должен быть формата: \"example@gmail.com\"")
@@ -36,10 +36,10 @@ public class User {
     }
 
     public void setFriend(User user) {
-        friends.add(user.getId());
+        friends.add(user.getId_user());
     }
 
     public void removeFriend(User user) {
-        friends.remove(user.getId());
+        friends.remove(user.getId_user());
     }
 }

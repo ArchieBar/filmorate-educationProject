@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFountException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.film.Film;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -40,21 +40,21 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film createFilm(Film film) {
         log.info("Вызов метода /createFilm - " + film);
-        if (films.containsKey(film.getId())) {
-            log.debug(MessageFormat.format("Фильм с id: {0} уже добавлен", film.getId()) +
+        if (films.containsKey(film.getId_film())) {
+            log.debug(MessageFormat.format("Фильм с id: {0} уже добавлен", film.getId_film()) +
                     "\n" + films);
-            throw new ValidationException(MessageFormat.format("Фильм с id: {0} уже добавлен", film.getId()));
+            throw new ValidationException(MessageFormat.format("Фильм с id: {0} уже добавлен", film.getId_film()));
         }
-        film.setId(createId());
-        films.put(film.getId(), film);
+        film.setId_film(createId());
+        films.put(film.getId_film(), film);
         return film;
     }
 
     @Override
     public Film updateFilm(Film film) {
         log.info("Вызов метода /updateFilm - " + film);
-        findFilmById(film.getId());
-        films.put(film.getId(), film);
+        findFilmById(film.getId_film());
+        films.put(film.getId_film(), film);
         return film;
     }
 }

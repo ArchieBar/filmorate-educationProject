@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.serviceTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
@@ -54,7 +54,7 @@ class UserServiceTest {
         userService.addFriend(1, 3);
         userService.addFriend(2, 3);
 
-        Integer mutualFriend = userService.findMutualFriends(1, 2).get(0).getId();
+        Integer mutualFriend = userService.findMutualFriends(1, 2).get(0).getId_user();
 
         assertEquals(3, mutualFriend);
     }

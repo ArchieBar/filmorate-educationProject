@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.storageTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -43,7 +43,7 @@ class InMemoryUserStorageTest {
     @Test
     void theUsersMustBeUpdatingCorrectly() {
         User newUser = new User("example@gmail.com", "loginNew", "nameNew", "2001-01-01");
-        newUser.setId(1);
+        newUser.setId_user(1);
 
         userStorage.updateUser(newUser);
 

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.model.film;
 
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Data
 public class Film {
-    private int id;
+    private int id_film;
 
     @NotBlank(message = "Название фильма не может быть пустым.")
     private String name;
@@ -26,24 +26,16 @@ public class Film {
 
     private Set<Integer> likes;
 
-    private GenreFilm genre;
-
-    private RatingFilm rating;
-
     public Film(
             String name,
             String description,
             String releaseDate,
-            int duration,
-            GenreFilm genre,
-            RatingFilm rating) {
+            int duration){
         this.name = name;
         this.description = description;
         this.releaseDate = LocalDate.parse(releaseDate);
         this.duration = duration;
         this.likes = new HashSet<>();
-        this.genre = genre;
-        this.rating = rating;
     }
 
     public int getCountLikes() {

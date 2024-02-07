@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFountException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -62,7 +62,7 @@ public class FilmService {
     public List<Integer> addLike(Integer filmId, Integer userId) {
         log.info(MessageFormat.format("Вызов метода: /addLike - filmId: {0}, userId: {1}", filmId, userId));
         Film film = filmStorage.findFilmById(filmId);
-        film.setLike(userStorage.findUserByID(userId).getId());
+        film.setLike(userStorage.findUserByID(userId).getId_user());
         return new ArrayList<>(film.getLikes());
     }
 

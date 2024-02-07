@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
@@ -53,7 +53,7 @@ class UserControllerTest {
         User newUser = new User("email@email.ru", "newLogin", "name", "2000-01-01");
 
         userController.createUser(user);
-        newUser.setId(user.getId());
+        newUser.setId_user(user.getId_user());
         userController.updateUser(newUser);
 
         assertEquals(1, userController.getAllUsers().size());
