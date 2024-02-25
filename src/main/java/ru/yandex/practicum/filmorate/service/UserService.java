@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UserService {
-    private final UserStorage userStorage;
+    private final UserStorage userStorage; // @Primary in UserDbStorage (User_DAO)
 
     @Autowired
     public UserService(UserStorage userStorage) {
@@ -30,7 +31,7 @@ public class UserService {
     }
 
     public User findUserByID(Integer userId) {
-        return userStorage.findUserByID(userId);
+        return userStorage.findUserById(userId);
     }
 
     public List<User> getAllUser() {
@@ -38,9 +39,9 @@ public class UserService {
     }
 
     public List<User> getFriendsUser(Integer userId) {
-        User user = userStorage.findUserByID(userId);
+        User user = userStorage.findUserById(userId);
         return user.getFriends().stream()
-                .map(userStorage::findUserByID)
+                .map(userStorage::findUserById)
                 .collect(Collectors.toList());
     }
 
@@ -57,24 +58,24 @@ public class UserService {
     public List<User> addFriend(Integer userId, Integer otherUserId) {
         log.info(MessageFormat.format(
                 "Вызов метода: /addFriend - userId: {0}, otherUserId: {1}", userId, otherUserId));
-        User user = userStorage.findUserByID(userId);
-        User otherUser = userStorage.findUserByID(otherUserId);
+        User user = userStorage.findUserById(userId);
+        User otherUser = userStorage.findUserById(otherUserId);
         user.setFriend(otherUser);
         otherUser.setFriend(user);
         return user.getFriends().stream()
-                .map(userStorage::findUserByID)
+                .map(userStorage::findUserById)
                 .collect(Collectors.toList());
     }
 
     public List<User> deleteFriend(Integer userId, Integer otherUserId) {
         log.info(MessageFormat.format(
                 "Вызов метода: /deleteFriend - userId: {0}, otherUserId: {1}", userId, otherUserId));
-        User user = userStorage.findUserByID(userId);
-        User otherUser = userStorage.findUserByID(otherUserId);
+        User user = userStorage.findUserById(userId);
+        User otherUser = userStorage.findUserById(otherUserId);
         user.removeFriend(otherUser);
         otherUser.removeFriend(user);
         return user.getFriends().stream()
-                .map(userStorage::findUserByID)
+                .map(userStorage::findUserById)
                 .collect(Collectors.toList());
     }
 
@@ -84,11 +85,11 @@ public class UserService {
     // -- А нет, работает :)
     // 24.01.24 - "Это была крутая бессонная ночь"
     public List<User> findMutualFriends(Integer userId, Integer otherUserId) {
-        Set<Integer> userFriends = userStorage.findUserByID(userId).getFriends();
-        Set<Integer> otherUserFriends = userStorage.findUserByID(otherUserId).getFriends();
+        Set<Integer> userFriends = userStorage.findUserById(userId).getFriends();
+        Set<Integer> otherUserFriends = userStorage.findUserById(otherUserId).getFriends();
         return userFriends.stream()
                 .filter(otherUserFriends::contains)
-                .map(userStorage::findUserByID)
+                .map(userStorage::findUserById)
                 .collect(Collectors.toList());
     }
 }

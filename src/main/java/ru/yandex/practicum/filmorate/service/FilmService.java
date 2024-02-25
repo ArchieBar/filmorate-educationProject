@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFountException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -20,8 +21,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class FilmService {
-    private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+    private final FilmStorage filmStorage; // @Primary in FilmDbStorage (Film_DAO)
+    private final UserStorage userStorage; // @Primary in UserDbStorage (User_DAO)
 
     @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
@@ -29,9 +30,6 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
-    //TODO
-    // Лучше ли сделать собственную аннотацию?
-    // Егор говорит, что это плоха практика, но особо в этот вопрос я не углублялся
     private Film validateReleaseDataFilm(Film film) throws ValidationException {
         final LocalDate EARLIEST_RELEASE_DATE =
                 LocalDate.of(1895, 12, 28);
@@ -62,7 +60,7 @@ public class FilmService {
     public List<Integer> addLike(Integer filmId, Integer userId) {
         log.info(MessageFormat.format("Вызов метода: /addLike - filmId: {0}, userId: {1}", filmId, userId));
         Film film = filmStorage.findFilmById(filmId);
-        film.setLike(userStorage.findUserByID(userId).getId_user());
+        film.setLike(userStorage.findUserById(userId).getId_user());
         return new ArrayList<>(film.getLikes());
     }
 

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component
+@Component("Film_In_Memory")
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
 
@@ -40,21 +40,21 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film createFilm(Film film) {
         log.info("Вызов метода /createFilm - " + film);
-        if (films.containsKey(film.getId_film())) {
-            log.debug(MessageFormat.format("Фильм с id: {0} уже добавлен", film.getId_film()) +
+        if (films.containsKey(film.getIdFilm())) {
+            log.debug(MessageFormat.format("Фильм с id: {0} уже добавлен", film.getIdFilm()) +
                     "\n" + films);
-            throw new ValidationException(MessageFormat.format("Фильм с id: {0} уже добавлен", film.getId_film()));
+            throw new ValidationException(MessageFormat.format("Фильм с id: {0} уже добавлен", film.getIdFilm()));
         }
-        film.setId_film(createId());
-        films.put(film.getId_film(), film);
+        film.setIdFilm(createId());
+        films.put(film.getIdFilm(), film);
         return film;
     }
 
     @Override
     public Film updateFilm(Film film) {
         log.info("Вызов метода /updateFilm - " + film);
-        findFilmById(film.getId_film());
-        films.put(film.getId_film(), film);
+        findFilmById(film.getIdFilm());
+        films.put(film.getIdFilm(), film);
         return film;
     }
 }

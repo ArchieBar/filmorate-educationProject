@@ -15,7 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmService filmService;
+    private final FilmService filmService; // @Primary FilmDbStorage
 
     @Autowired
     public FilmController(FilmService filmService) {

@@ -2,25 +2,25 @@
 INSERT INTO acceptance_status_list (id_acceptance_status, acceptance_status)
 SELECT 1, 'Запрос на дружбу'
 WHERE NOT EXISTS (
-  SELECT 1
-  FROM acceptance_status_list
-  WHERE id_acceptance_status = 1
+    SELECT 1
+    FROM acceptance_status_list
+    WHERE id_acceptance_status = 1
 );
 
 INSERT INTO acceptance_status_list (id_acceptance_status, acceptance_status)
 SELECT 2, 'Запрос принят'
 WHERE NOT EXISTS (
-  SELECT 1
-  FROM acceptance_status_list
-  WHERE id_acceptance_status = 2
+    SELECT 1
+    FROM acceptance_status_list
+    WHERE id_acceptance_status = 2
 );
 
 INSERT INTO acceptance_status_list (id_acceptance_status, acceptance_status)
 SELECT 3, 'Запрос отклонен'
 WHERE NOT EXISTS (
-  SELECT 1
-  FROM acceptance_status_list
-  WHERE id_acceptance_status = 3
+    SELECT 1
+    FROM acceptance_status_list
+    WHERE id_acceptance_status = 3
 );
 
 -- Вставка данных в таблицу ratings_list, если она еще не существует

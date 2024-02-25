@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.serviceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.film.Film;
+import ru.yandex.practicum.filmorate.model.film.Genre;
+import ru.yandex.practicum.filmorate.model.film.Mpa;
 import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -10,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,9 +27,9 @@ class FilmServiceTest {
         this.filmService = new FilmService(new InMemoryFilmStorage(), userStorage);
         this.userService = new UserService(userStorage);
 
-        Film film1 = new Film("name1", "description1", "2001-01-01", 111);
-        Film film2 = new Film("name2", "description2", "2002-02-02", 222);
-        Film film3 = new Film("name3", "description3", "2003-03-03", 333);
+        Film film1 = new Film("name1", "description1", "2001-01-01", 111, 5, new Mpa(1), new HashSet<>());
+        Film film2 = new Film("name2", "description2", "2002-02-02", 222, 5, new Mpa(1), new HashSet<>());
+        Film film3 = new Film("name3", "description3", "2003-03-03", 333, 5,new Mpa(1), new HashSet<>());
 
         User user1 = new User("example@gmail.com", "login1", "name1", "2001-01-01");
         User user2 = new User("example@gmail.com", "login2", "name2", "2002-02-03");

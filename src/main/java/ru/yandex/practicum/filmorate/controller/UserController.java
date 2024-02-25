@@ -15,7 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final UserService userService;
+    private final UserService userService; // @Primary UserDbStorage
 
     @Autowired
     public UserController(UserService userService) {

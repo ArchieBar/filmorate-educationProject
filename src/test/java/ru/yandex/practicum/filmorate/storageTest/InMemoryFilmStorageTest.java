@@ -3,8 +3,11 @@ package ru.yandex.practicum.filmorate.storageTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.film.Film;
+import ru.yandex.practicum.filmorate.model.film.Mpa;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,9 +21,9 @@ class InMemoryFilmStorageTest {
     void setUp() {
         this.filmStorage = new InMemoryFilmStorage();
 
-        this.film1 = new Film("name1", "description1", "2001-01-01", 111);
-        this.film2 = new Film("name2", "description2", "2002-02-02", 222);
-        this.film3 = new Film("name3", "description3", "2003-03-03", 333);
+        this.film1 = new Film("name1", "description1", "2001-01-01", 111, 1, new Mpa(1), new HashSet<>());
+        this.film2 = new Film("name2", "description2", "2002-02-02", 222, 1, new Mpa(1), new HashSet<>());
+        this.film3 = new Film("name3", "description3", "2003-03-03", 333, 1, new Mpa(1), new HashSet<>());
 
         filmStorage.createFilm(film1); // id = 1
         filmStorage.createFilm(film2); // id = 2
@@ -41,8 +44,8 @@ class InMemoryFilmStorageTest {
 
     @Test
     void theFilmMustBeUpdatingCorrectly() {
-        Film newFilm = new Film("nameNew", "descriptionNew", "2001-01-01", 111);
-        newFilm.setId_film(1);
+        Film newFilm = new Film("nameNew", "descriptionNew", "2001-01-01", 111, 1, new Mpa(1), new HashSet<>());
+        newFilm.setIdFilm(1);
 
         filmStorage.updateFilm(newFilm);
 

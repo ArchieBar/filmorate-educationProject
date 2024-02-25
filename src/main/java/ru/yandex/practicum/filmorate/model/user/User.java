@@ -35,6 +35,14 @@ public class User {
         this.friends = new HashSet<>();
     }
 
+    public User(int id_user, String email, String login, String name, String birthday) {
+        this.id_user = id_user;
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = LocalDate.parse(birthday);
+    }
+
     public void setFriend(User user) {
         friends.add(user.getId_user());
     }

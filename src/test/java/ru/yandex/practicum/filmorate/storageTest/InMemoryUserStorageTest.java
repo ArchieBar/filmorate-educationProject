@@ -35,9 +35,9 @@ class InMemoryUserStorageTest {
 
     @Test
     void theUsersMustBeCreatedCorrectly() {
-        assertEquals(user1, userStorage.findUserByID(1));
-        assertEquals(user2, userStorage.findUserByID(2));
-        assertEquals(user3, userStorage.findUserByID(3));
+        assertEquals(user1, userStorage.findUserById(1));
+        assertEquals(user2, userStorage.findUserById(2));
+        assertEquals(user3, userStorage.findUserById(3));
     }
 
     @Test
@@ -47,7 +47,7 @@ class InMemoryUserStorageTest {
 
         userStorage.updateUser(newUser);
 
-        assertEquals(newUser, userStorage.findUserByID(1));
+        assertEquals(newUser, userStorage.findUserById(1));
     }
 
     //TODO

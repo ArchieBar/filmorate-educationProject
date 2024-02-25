@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component
+@Component("User_In_Memory")
 public class InMemoryUserStorage implements UserStorage {
     @Getter
     private final Map<Integer, User> users = new HashMap<>();
@@ -25,7 +25,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User findUserByID(Integer userId) {
+    public User findUserById(Integer userId) {
        if (!users.containsKey(userId)) {
            log.debug(MessageFormat.format("Пользователь с id: {0} не найден", userId) +
                    "\n" + users);
@@ -56,7 +56,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User updateUser(User user) {
         log.info("Вызов метода /updateUser - " + user);
-        findUserByID(user.getId_user());
+        findUserById(user.getId_user());
         users.put(user.getId_user(), user);
         return user;
     }

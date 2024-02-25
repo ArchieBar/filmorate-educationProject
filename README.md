@@ -11,9 +11,9 @@
 Содержит информацию о заявках и статусах дружбы
 + **(PK)** id_user_1 - идентификатор первого пользователя
 + **(PK)** id_user_2 - идентификатор второго пользователя
-+ **(FK)** id_acceptance_status *(таблица: acceptance_status)* - идентификатор статуса заявки
++ **(FK)** id_acceptance_status *(таблица: acceptance_status_list)* - идентификатор статуса заявки
 
-### acceptance_status
+### acceptance_status_list
 Содержит перечень статусов 
 + **(PK)** id_acceptance_status - идентификатор статуса заявки
 + acceptance_status - статус заявки
@@ -25,9 +25,9 @@
 + description - описание фильма
 + release_date - дата релиза фильма
 + duration - продолжительность фильма
-+ **(FK)** id_rating *(таблица: ratings)* - идентификатор рейтинга фильма
++ **(FK)** id_rating *(таблица: ratings_list)* - идентификатор рейтинга фильма
 
-### ratings
+### ratings_list
 Содержит перечень рейтингов
 + **(PK)** id_rating - идентификатор рейтинга
 + rating - рейтинг
@@ -42,7 +42,7 @@
 + **(PK)** id_film - идентификатор фильма
 + **(PK)** id_genre - идентификатор жанра фильма
 
-### genres
+### genres_list
 Содержит перечень жанров фильмов
 + **(PK)** id_genre - идентификатор жанра
 + genre - жанр
