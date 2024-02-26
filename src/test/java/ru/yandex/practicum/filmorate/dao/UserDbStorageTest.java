@@ -27,4 +27,4 @@ class UserDbStorageTest {
                 .usingRecursiveComparison()
                 .isEqualTo(newUser);
     }
-} 
+}
