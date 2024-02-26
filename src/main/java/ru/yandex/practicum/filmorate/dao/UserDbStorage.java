@@ -103,11 +103,11 @@ public class UserDbStorage implements UserStorage {
 
     @Override
 
-    public void updateFriendship(int id, int idFriend, int id_status) {
+    public void updateFriendship(int id, int idFriend, int idStatus) {
         String sql =
                 "UPDATE users_friendship SET id_user_1 = ?, id_user_2 = ?, id_acceptance_status = ? " +
                         "WHERE id_user_1 = ? AND id_user_2 = ?";
-        jdbcTemplate.update(sql, id, idFriend, id_status, id, idFriend);
+        jdbcTemplate.update(sql, id, idFriend, idStatus, id, idFriend);
     }
 
     @Override
