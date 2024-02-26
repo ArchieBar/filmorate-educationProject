@@ -15,7 +15,7 @@ public interface UserStorage {
 
     int checkFriendshipStatus(int id, int idFriend);
 
-    void updateFriendship(int id, int idFriend, int id_status);
+    void updateFriendship(int id, int idFriend, int idStatus);
 
     void insertFriendship(int id, int idFriend);
 
