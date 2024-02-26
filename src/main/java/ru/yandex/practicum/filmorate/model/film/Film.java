@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Data
 @ToString
@@ -25,7 +26,7 @@ public class Film {
     private int duration;
     private double rate;
     private Mpa mpa;
-    private Set<Genre> genres = new HashSet<>();
+    private Set<Genre> genres = new TreeSet<>();
     private Set<Integer> likes = new HashSet<>();
 
     public Film(
@@ -55,5 +56,9 @@ public class Film {
 
     public void removeLike(Integer userId) {
         likes.remove(userId);
+    }
+
+    public void addGenre(Genre genre) {
+        this.genres.add(genre);
     }
 }

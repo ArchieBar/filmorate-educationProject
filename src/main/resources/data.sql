@@ -58,7 +58,7 @@ WHERE NOT EXISTS (
 
 -- Вставка данных в таблицу genres_list, если она еще не существует
 INSERT INTO genres_list (id_genre, genre)
-SELECT 1, 'Боевик'
+SELECT 1, 'Комедия'
 WHERE NOT EXISTS (
     SELECT 1
     FROM genres_list
@@ -66,7 +66,7 @@ WHERE NOT EXISTS (
 );
 
 INSERT INTO genres_list (id_genre, genre)
-SELECT 2, 'Комедия'
+SELECT 2, 'Драма'
 WHERE NOT EXISTS (
     SELECT 1
     FROM genres_list
@@ -74,7 +74,7 @@ WHERE NOT EXISTS (
 );
 
 INSERT INTO genres_list (id_genre, genre)
-SELECT 3, 'Драма'
+SELECT 3, 'Мультфильм'
 WHERE NOT EXISTS (
     SELECT 1
     FROM genres_list
@@ -82,7 +82,7 @@ WHERE NOT EXISTS (
 );
 
 INSERT INTO genres_list (id_genre, genre)
-SELECT 4, 'Фантастика'
+SELECT 4, 'Триллер'
 WHERE NOT EXISTS (
     SELECT 1
     FROM genres_list
@@ -90,7 +90,7 @@ WHERE NOT EXISTS (
 );
 
 INSERT INTO genres_list (id_genre, genre)
-SELECT 5, 'Ужасы'
+SELECT 5, 'Документальный'
 WHERE NOT EXISTS (
     SELECT 1
     FROM genres_list
@@ -98,33 +98,9 @@ WHERE NOT EXISTS (
 );
 
 INSERT INTO genres_list (id_genre, genre)
-SELECT 6, 'Триллер'
+SELECT 6, 'Боевик'
 WHERE NOT EXISTS (
     SELECT 1
     FROM genres_list
     WHERE id_genre = 6
-);
-
-INSERT INTO genres_list (id_genre, genre)
-SELECT 7, 'Приключения'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM genres_list
-    WHERE id_genre = 7
-);
-
-INSERT INTO genres_list (id_genre, genre)
-SELECT 8, 'Фэнтези'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM genres_list
-    WHERE id_genre = 8
-);
-
-INSERT INTO genres_list (id_genre, genre)
-SELECT 9, 'Вестерн'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM genres_list
-    WHERE id_genre = 9
 );

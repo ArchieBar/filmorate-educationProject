@@ -45,10 +45,6 @@ public class FilmService {
         return film;
     }
 
-    private void loadData(Film film) {
-
-    }
-
     public List<Film> getPopularFilms(Integer count) {
         return getAllFilm().stream()
                 .sorted(Comparator.comparingInt(Film::getCountLikes).reversed())
@@ -83,12 +79,14 @@ public class FilmService {
 
     public Film createFilm(Film film) throws SQLException, IOException {
         log.info("Вызов метода: /createFilm - " + film);
-        return filmStorage.createFilm(validateReleaseDataFilm(film));
+        film = filmStorage.createFilm(validateReleaseDataFilm(film));
+        return film;
     }
 
     public Film updateFilm(Film film) throws SQLException, IOException {
         log.info("Вызов метода: /updateFilm - " + film);
-        return filmStorage.updateFilm(validateReleaseDataFilm(film));
+        film = filmStorage.updateFilm(film);
+        return film;
     }
 
     public List<Integer> deleteLike(Integer filmId, Integer userId) throws SQLException, IOException {

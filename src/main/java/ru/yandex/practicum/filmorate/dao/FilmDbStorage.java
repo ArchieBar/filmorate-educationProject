@@ -1,10 +1,10 @@
 package ru.yandex.practicum.filmorate.dao;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmCreatePreviouslyException;
 import ru.yandex.practicum.filmorate.exception.FilmNotFountException;
 import ru.yandex.practicum.filmorate.model.film.Film;
+import ru.yandex.practicum.filmorate.model.film.Genre;
 import ru.yandex.practicum.filmorate.model.film.Mpa;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
@@ -24,11 +25,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Slf4j
 @Component("Film_DAO")
 @Qualifier("Film_DAO")
 @Primary
 public class FilmDbStorage implements FilmStorage {
-    private final Logger log = LoggerFactory.getLogger(FilmDbStorage.class);
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -90,10 +91,12 @@ public class FilmDbStorage implements FilmStorage {
             values.put("description", film.getDescription());
             values.put("release_date", film.getReleaseDate());
             values.put("duration", film.getDuration());
+            values.put("rate", film.getRate());
             values.put("id_mpa", film.getMpa().getId());
             film.setId(insert.executeAndReturnKey(values).intValue());
 
-            return film;
+            saveGenre(film);
+            return findFilmById(film.getId());
         } else {
             throw new FilmCreatePreviouslyException(MessageFormat.format("Фильм с id: {0} уже зарегистрирован",
                     film.getId()));
@@ -108,16 +111,20 @@ public class FilmDbStorage implements FilmStorage {
                             "name = ?, " +
                             "description= ?, " +
                             "release_date = ?, " +
-                            "duration = ?, id_mpa = ? " +
+                            "duration = ?, " +
+                            "rate = ?, " +
+                            "id_mpa = ? " +
                             "WHERE id_film = ?";
             jdbcTemplate.update(sql,
                     film.getName(),
                     film.getDescription(),
                     film.getReleaseDate(),
                     film.getDuration(),
+                    film.getRate(),
                     film.getMpa().getId(),
                     film.getId());
 
+            saveGenre(film);
             return findFilmById(film.getId());
         } else {
             throw new FilmNotFountException(MessageFormat.format("Фильм с id: {0} не найден", film.getId()));
@@ -134,11 +141,39 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
+    public void saveGenre(Film film) {
+            jdbcTemplate.update("DELETE FROM genres_film WHERE id_film = ?", film.getId());
+            String sql = "INSERT INTO genres_film (id_film, id_genre) VALUES (?, ?)";
+            Set<Genre> genres = film.getGenres();
+            for (Genre genre : genres) {
+                try {
+                    jdbcTemplate.update(sql, film.getId(), genre.getId());
+                } catch (DataAccessException ignored) {
+                    log.debug(MessageFormat.format("Исключение DataAccessException из-за genre: {0}", genre));
+                }
+            }
+
+
+    }
+
     private void loadLikes(Film film) {
         String sql = "SELECT id_user FROM film_likes WHERE id_film = ?";
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, film.getId());
         while (sqlRowSet.next()) {
             film.setLike(sqlRowSet.getInt("id_user"));
+        }
+    }
+
+    private void loadGenres(Film film) {
+        String sql = "SELECT " +
+                "gf.id_genre, " +
+                "gl.genre " +
+                "FROM genres_film gf " +
+                "JOIN genres_list gl ON gf.id_genre = gl.id_genre " +
+                "WHERE gf.id_film = ?";
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, film.getId());
+        while (sqlRowSet.next()){
+            film.addGenre(new Genre(sqlRowSet.getInt("id_genre"), sqlRowSet.getString("genre")));
         }
     }
 
@@ -153,6 +188,7 @@ public class FilmDbStorage implements FilmStorage {
                 new Mpa(rs.getInt("id_mpa"), rs.getString("mpa"))
         );
         loadLikes(film);
+        loadGenres(film);
         return film;
     }
 }

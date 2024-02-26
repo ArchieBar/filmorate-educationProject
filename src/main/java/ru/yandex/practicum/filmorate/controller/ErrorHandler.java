@@ -27,7 +27,11 @@ public class ErrorHandler {
         return new ErrorResponse("Ранее созданный объект", e.getMessage());
     }
 
-    @ExceptionHandler({FilmNotFountException.class, UserNotFountException.class})
+    @ExceptionHandler({
+            FilmNotFountException.class,
+            UserNotFountException.class,
+            MpaNotFoundException.class,
+            GenreNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private ErrorResponse filmNotFountHandle(Exception e) {
         return new ErrorResponse("Не найдено", e.getMessage());
