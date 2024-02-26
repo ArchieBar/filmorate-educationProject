@@ -39,7 +39,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({SQLException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    private ErrorResponse SQLExceptionHandler(Exception e) {
+    private ErrorResponse sqlExceptionHandler(Exception e) {
         return new ErrorResponse("Ошибка с базой данных", e.getMessage());
     }
 
