@@ -15,53 +15,45 @@ WHERE NOT EXISTS (
     WHERE id_acceptance_status = 2
 );
 
-INSERT INTO acceptance_status_list (id_acceptance_status, acceptance_status)
-SELECT 3, 'Запрос отклонен'
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM acceptance_status_list
-    WHERE id_acceptance_status = 3
-);
-
--- Вставка данных в таблицу ratings_list, если она еще не существует
-INSERT INTO ratings_list (id_rating, rating)
+-- Вставка данных в таблицу mpa_list, если она еще не существует
+INSERT INTO mpa_list (id_mpa, mpa)
 SELECT 1, 'G'
 WHERE NOT EXISTS (
     SELECT 1
-    FROM ratings_list
-    WHERE id_rating = 1
+    FROM mpa_list
+    WHERE id_mpa = 1
 );
 
-INSERT INTO ratings_list (id_rating, rating)
+INSERT INTO mpa_list (id_mpa, mpa)
 SELECT 2, 'PG'
 WHERE NOT EXISTS (
     SELECT 1
-    FROM ratings_list
-    WHERE id_rating = 2
+    FROM mpa_list
+    WHERE id_mpa = 2
 );
 
-INSERT INTO ratings_list (id_rating, rating)
+INSERT INTO mpa_list (id_mpa, mpa)
 SELECT 3, 'PG-13'
 WHERE NOT EXISTS (
     SELECT 1
-    FROM ratings_list
-    WHERE id_rating = 3
+    FROM mpa_list
+    WHERE id_mpa = 3
 );
 
-INSERT INTO ratings_list (id_rating, rating)
+INSERT INTO mpa_list (id_mpa, mpa)
 SELECT 4, 'R'
 WHERE NOT EXISTS (
     SELECT 1
-    FROM ratings_list
-    WHERE id_rating = 4
+    FROM mpa_list
+    WHERE id_mpa = 4
 );
 
-INSERT INTO ratings_list (id_rating, rating)
+INSERT INTO mpa_list (id_mpa, mpa)
 SELECT 5, 'NC-17'
 WHERE NOT EXISTS (
     SELECT 1
-    FROM ratings_list
-    WHERE id_rating = 5
+    FROM mpa_list
+    WHERE id_mpa = 5
 );
 
 -- Вставка данных в таблицу genres_list, если она еще не существует

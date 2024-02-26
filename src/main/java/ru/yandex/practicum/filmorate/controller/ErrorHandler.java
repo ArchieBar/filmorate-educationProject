@@ -5,10 +5,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.exception.FilmNotFountException;
-import ru.yandex.practicum.filmorate.exception.UserNotFountException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
+
+import java.sql.SQLException;
 
 @RestControllerAdvice
 public class ErrorHandler {
@@ -18,10 +18,25 @@ public class ErrorHandler {
         return new ErrorResponse("Ошибка валидации", e.getMessage());
     }
 
+    @ExceptionHandler({
+            FilmCreatePreviouslyException.class,
+            UserCreatePreviouslyException.class,
+            LikeCreatePreviouslyException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    private ErrorResponse previouslyCreateObject(Exception e) {
+        return new ErrorResponse("Ранее созданный объект", e.getMessage());
+    }
+
     @ExceptionHandler({FilmNotFountException.class, UserNotFountException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    private ErrorResponse filmNotFountHandle(RuntimeException e) {
+    private ErrorResponse filmNotFountHandle(Exception e) {
         return new ErrorResponse("Не найдено", e.getMessage());
+    }
+
+    @ExceptionHandler({SQLException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private ErrorResponse SQLExceptionHandler(Exception e) {
+        return new ErrorResponse("Ошибка с базой данных", e.getMessage());
     }
 
     @ExceptionHandler()

@@ -42,22 +42,42 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User createUser(User user) {
         log.info("Вызов метода /createUser - " + user);
-        if (users.containsKey(user.getId_user())) {
-            log.debug(MessageFormat.format("Пользователь с id: {0} уже зарегистрирован", user.getId_user()) +
+        if (users.containsKey(user.getId())) {
+            log.debug(MessageFormat.format("Пользователь с id: {0} уже зарегистрирован", user.getId()) +
                     "\n" + users);
             throw new ValidationException(
-                    MessageFormat.format("Пользователь с id: {0} уже зарегистрирован", user.getId_user()));
+                    MessageFormat.format("Пользователь с id: {0} уже зарегистрирован", user.getId()));
         }
-        user.setId_user(createId());
-        users.put(user.getId_user(), user);
+        user.setId(createId());
+        users.put(user.getId(), user);
         return user;
     }
 
     @Override
     public User updateUser(User user) {
         log.info("Вызов метода /updateUser - " + user);
-        findUserById(user.getId_user());
-        users.put(user.getId_user(), user);
+        findUserById(user.getId());
+        users.put(user.getId(), user);
         return user;
+    }
+
+    @Override
+    public int checkFriendshipStatus(int id, int idFriend) {
+        return 0;
+    }
+
+    @Override
+    public void updateFriendship(int id, int idFriend, int id_status) {
+
+    }
+
+    @Override
+    public void insertFriendship(int id, int idFriend) {
+
+    }
+
+    @Override
+    public void removeFriendship(int id, int idFriend) {
+
     }
 }

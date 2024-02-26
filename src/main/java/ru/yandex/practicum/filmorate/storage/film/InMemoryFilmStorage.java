@@ -40,21 +40,26 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film createFilm(Film film) {
         log.info("Вызов метода /createFilm - " + film);
-        if (films.containsKey(film.getIdFilm())) {
-            log.debug(MessageFormat.format("Фильм с id: {0} уже добавлен", film.getIdFilm()) +
+        if (films.containsKey(film.getId())) {
+            log.debug(MessageFormat.format("Фильм с id: {0} уже добавлен", film.getId()) +
                     "\n" + films);
-            throw new ValidationException(MessageFormat.format("Фильм с id: {0} уже добавлен", film.getIdFilm()));
+            throw new ValidationException(MessageFormat.format("Фильм с id: {0} уже добавлен", film.getId()));
         }
-        film.setIdFilm(createId());
-        films.put(film.getIdFilm(), film);
+        film.setId(createId());
+        films.put(film.getId(), film);
         return film;
     }
 
     @Override
     public Film updateFilm(Film film) {
         log.info("Вызов метода /updateFilm - " + film);
-        findFilmById(film.getIdFilm());
-        films.put(film.getIdFilm(), film);
+        findFilmById(film.getId());
+        films.put(film.getId(), film);
         return film;
+    }
+
+    @Override
+    public void saveLikes(Film film) {
+
     }
 }

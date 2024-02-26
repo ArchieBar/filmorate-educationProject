@@ -1,8 +1,8 @@
 -- Создание таблицы user, если она еще не существует
 CREATE TABLE IF NOT EXISTS users (
   id_user INT NOT NULL AUTO_INCREMENT,
-  email VARCHAR(255) NOT NULL UNIQUE,
-  login VARCHAR(255) NOT NULL UNIQUE,
+  email VARCHAR(255) NOT NULL,
+  login VARCHAR(255) NOT NULL,
   name VARCHAR(255) NOT NULL,
   birthday DATE NOT NULL,
   PRIMARY KEY (id_user)
@@ -27,10 +27,10 @@ CREATE TABLE IF NOT EXISTS users_friendship (
 );
 
 -- Создание таблицы ratings_list, если она еще не существует
-CREATE TABLE IF NOT EXISTS ratings_list (
-  id_rating INT NOT NULL AUTO_INCREMENT,
-  rating VARCHAR(255) NOT NULL,
-  PRIMARY KEY (id_rating)
+CREATE TABLE IF NOT EXISTS mpa_list (
+  id_mpa INT NOT NULL AUTO_INCREMENT,
+  mpa VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id_mpa)
 );
 
 -- Создание таблицы film, если она еще не существует
@@ -40,9 +40,10 @@ CREATE TABLE IF NOT EXISTS film (
   description TEXT NOT NULL,
   release_date DATE NOT NULL,
   duration INT NOT NULL,
-  id_rating INT,
+  rate DOUBLE DEFAULT 0.0,
+  id_mpa INT,
   PRIMARY KEY (id_film),
-  FOREIGN KEY (id_rating) REFERENCES ratings_list (id_rating)
+  FOREIGN KEY (id_mpa) REFERENCES mpa_list (id_mpa)
 );
 
 -- Создание таблицы film_likes, если она еще не существует

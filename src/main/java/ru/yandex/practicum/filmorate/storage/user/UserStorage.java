@@ -12,4 +12,12 @@ public interface UserStorage {
     public User createUser(User user);
 
     public User updateUser(User user);
+
+    public int checkFriendshipStatus(int id, int idFriend);
+
+    public void updateFriendship(int id, int idFriend, int id_status);
+
+    public void insertFriendship(int id, int idFriend);
+
+    public void removeFriendship(int id, int idFriend);
 }

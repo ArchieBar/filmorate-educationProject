@@ -8,6 +8,8 @@ import ru.yandex.practicum.filmorate.model.film.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +26,7 @@ public class FilmController {
 
     @GetMapping("/{filmId}")
     @ResponseStatus(HttpStatus.OK)
-    public Film getFilmById(@PathVariable Integer filmId) {
+    public Film getFilmById(@PathVariable Integer filmId) throws SQLException, IOException {
         return filmService.findFilmById(filmId);
     }
 
@@ -42,21 +44,21 @@ public class FilmController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Film createFilm(@Valid @RequestBody Film film) {
+    public Film createFilm(@Valid @RequestBody Film film) throws SQLException, IOException {
         log.info("Вызов метода POST: /createFilm - " + film);
         return filmService.createFilm(film);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public Film updateFilm(@Valid @RequestBody Film film) {
+    public Film updateFilm(@Valid @RequestBody Film film) throws SQLException, IOException {
         log.info("Вызов метода PUT: /updateFilm - " + film);
         return filmService.updateFilm(film);
     }
 
     @PutMapping("/{filmId}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<Integer> addFilmLike(@PathVariable Map<String, String> pathId) {
+    public List<Integer> addFilmLike(@PathVariable Map<String, String> pathId) throws SQLException, IOException {
         log.info("Вызов метода PUT: /addFilmLike - " + pathId);
         Integer filmId = Integer.parseInt(pathId.get("filmId"));
         Integer userid = Integer.parseInt(pathId.get("userId"));
@@ -65,7 +67,7 @@ public class FilmController {
 
     @DeleteMapping("/{filmId}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<Integer> deleteLike(@PathVariable Map<String, String> pathId) {
+    public List<Integer> deleteLike(@PathVariable Map<String, String> pathId) throws SQLException, IOException {
         log.info("Вызов метода DELETE: /deleteLike - " + pathId);
         Integer filmId = Integer.parseInt(pathId.get("filmId"));
         Integer userid = Integer.parseInt(pathId.get("userId"));
