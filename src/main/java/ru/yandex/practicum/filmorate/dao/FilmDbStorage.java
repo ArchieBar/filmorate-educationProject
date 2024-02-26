@@ -142,16 +142,16 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     public void saveGenre(Film film) {
-            jdbcTemplate.update("DELETE FROM genres_film WHERE id_film = ?", film.getId());
-            String sql = "INSERT INTO genres_film (id_film, id_genre) VALUES (?, ?)";
-            Set<Genre> genres = film.getGenres();
-            for (Genre genre : genres) {
-                try {
-                    jdbcTemplate.update(sql, film.getId(), genre.getId());
-                } catch (DataAccessException ignored) {
-                    log.debug(MessageFormat.format("Исключение DataAccessException из-за genre: {0}", genre));
-                }
+        jdbcTemplate.update("DELETE FROM genres_film WHERE id_film = ?", film.getId());
+        String sql = "INSERT INTO genres_film (id_film, id_genre) VALUES (?, ?)";
+        Set<Genre> genres = film.getGenres();
+        for (Genre genre : genres) {
+            try {
+                jdbcTemplate.update(sql, film.getId(), genre.getId());
+            } catch (DataAccessException ignored) {
+                log.debug(MessageFormat.format("Исключение DataAccessException из-за genre: {0}", genre));
             }
+        }
 
 
     }
@@ -172,7 +172,7 @@ public class FilmDbStorage implements FilmStorage {
                 "JOIN genres_list gl ON gf.id_genre = gl.id_genre " +
                 "WHERE gf.id_film = ?";
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, film.getId());
-        while (sqlRowSet.next()){
+        while (sqlRowSet.next()) {
             film.addGenre(new Genre(sqlRowSet.getInt("id_genre"), sqlRowSet.getString("genre")));
         }
     }

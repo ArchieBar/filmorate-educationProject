@@ -7,13 +7,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface FilmStorage {
-    public Film findFilmById(Integer filmId) throws SQLException, IOException;
+    Film findFilmById(Integer filmId) throws SQLException, IOException;
 
-    public List<Film> getAllFilm();
+    List<Film> getAllFilm();
 
-    public Film createFilm(Film film) throws SQLException, IOException;
+    Film createFilm(Film film) throws SQLException, IOException;
 
-    public Film updateFilm(Film film) throws SQLException, IOException;
+    Film updateFilm(Film film) throws SQLException, IOException;
 
-    public void saveLikes(Film film);
+    void saveLikes(Film film);
 }
