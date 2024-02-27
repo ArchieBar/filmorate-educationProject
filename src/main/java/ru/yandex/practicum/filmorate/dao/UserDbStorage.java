@@ -102,7 +102,6 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-
     public void updateFriendship(int id, int idFriend, int idStatus) {
         String sql =
                 "UPDATE users_friendship SET id_user_1 = ?, id_user_2 = ?, id_acceptance_status = ? " +
