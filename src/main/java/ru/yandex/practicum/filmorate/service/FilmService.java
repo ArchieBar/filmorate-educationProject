@@ -57,7 +57,7 @@ public class FilmService {
         if (film != null) {
             return film;
         } else {
-            throw new FilmNotFountException(MessageFormat.format("Фильм с id: {0} не найден", film));
+            throw new FilmNotFountException(MessageFormat.format("Фильм с id: {0} не найден", filmId));
         }
     }
 
@@ -67,7 +67,7 @@ public class FilmService {
 
     public List<Integer> addLike(Integer filmId, Integer userId) throws SQLException, IOException {
         log.info(MessageFormat.format("Вызов метода: /addLike - filmId: {0}, userId: {1}", filmId, userId));
-        Film film = filmStorage.findFilmById(filmId);
+        Film film = findFilmById(filmId);
         if (film.getLikes().contains(userId)) {
             throw new LikeCreatePreviouslyException(
                     MessageFormat.format("Пользователь с id: {0} уже поставил лайк", userId));
@@ -85,13 +85,13 @@ public class FilmService {
 
     public Film updateFilm(Film film) throws SQLException, IOException {
         log.info("Вызов метода: /updateFilm - " + film);
-        film = filmStorage.updateFilm(film);
+        film = filmStorage.updateFilm(findFilmById(film.getId()));
         return film;
     }
 
     public List<Integer> deleteLike(Integer filmId, Integer userId) throws SQLException, IOException {
         log.info(MessageFormat.format("Вызов метода: /deleteLike - filmId: {0}, userId: {1}", filmId, userId));
-        Film film = filmStorage.findFilmById(filmId);
+        Film film = findFilmById(filmId);
         log.info(film.toString());
         if (!film.getLikes().contains(userId)) {
             throw new UserNotFountException(

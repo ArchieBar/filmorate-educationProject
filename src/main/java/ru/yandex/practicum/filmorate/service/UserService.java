@@ -22,13 +22,13 @@ public class UserService {
 
     private User validateUserName(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
-            log.debug("Пустое имя, установлен логин вместо имени: " + user);
+            log.info("Пустое имя, установлен логин вместо имени: " + user);
             user.setName(user.getLogin());
         }
         return user;
     }
 
-    public User findUserByID(Integer userId) {
+    public User findUserById(Integer userId) {
         User user = userStorage.findUserById(userId);
         if (user != null) {
             return user;
@@ -58,10 +58,11 @@ public class UserService {
     public List<User> addFriend(Integer id, Integer idFriend) {
         log.info(MessageFormat.format(
                 "Вызов метода: /addFriend - userId: {0}, otherUserId: {1}", id, idFriend));
-        User user = findUserByID(id);
-        User friend = findUserByID(idFriend);
+        User user = findUserById(id);
+        User friend = findUserById(idFriend);
         if (user.getFriends().contains(idFriend)) {
             log.info(MessageFormat.format("Пользователь с id: {0} уже добавлен в друзья", idFriend));
+            return getFriendsUser(id);
         }
 
         user.setFriend(friend);
@@ -79,8 +80,8 @@ public class UserService {
     public List<User> deleteFriend(Integer id, Integer idFriend) {
         log.info(MessageFormat.format(
                 "Вызов метода: /deleteFriend - userId: {0}, otherUserId: {1}", id, idFriend));
-        User user = findUserByID(id);
-        User friend = findUserByID(idFriend);
+        User user = findUserById(id);
+        User friend = findUserById(idFriend);
 
         user.removeFriend(friend);
 
@@ -95,8 +96,8 @@ public class UserService {
     }
 
     public List<User> findMutualFriends(Integer userId, Integer otherUserId) {
-        findUserByID(userId);
-        findUserByID(otherUserId);
+        findUserById(userId);
+        findUserById(otherUserId);
         return userStorage.findMutualFriends(userId, otherUserId);
     }
 }

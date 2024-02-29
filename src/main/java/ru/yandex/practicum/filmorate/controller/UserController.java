@@ -15,7 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final UserService userService; // @Primary UserDbStorage
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
@@ -25,7 +25,7 @@ public class UserController {
     @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public User getUserById(@PathVariable Integer userId) {
-        return userService.findUserByID(userId);
+        return userService.findUserById(userId);
     }
 
     @GetMapping("/{userId}/friends")
