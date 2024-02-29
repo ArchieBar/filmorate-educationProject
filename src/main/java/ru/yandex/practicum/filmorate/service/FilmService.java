@@ -85,7 +85,7 @@ public class FilmService {
 
     public Film updateFilm(Film film) throws SQLException, IOException {
         log.info("Вызов метода: /updateFilm - " + film);
-        film = filmStorage.updateFilm(findFilmById(film.getId()));
+        film = filmStorage.updateFilm(film);
         return film;
     }
 
