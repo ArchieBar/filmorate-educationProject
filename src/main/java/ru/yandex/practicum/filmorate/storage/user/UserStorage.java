@@ -20,4 +20,8 @@ public interface UserStorage {
     void insertFriendship(int id, int idFriend);
 
     void removeFriendship(int id, int idFriend);
+
+    List<User> getFriendsUser(Integer idUser);
+
+    List<User> findMutualFriends(Integer userId, Integer otherUserId);
 }

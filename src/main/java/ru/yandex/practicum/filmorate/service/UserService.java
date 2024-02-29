@@ -9,13 +9,11 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class UserService {
-    private final UserStorage userStorage; // @Primary in UserDbStorage (User_DAO)
+    private final UserStorage userStorage;
 
     @Autowired
     public UserService(UserStorage userStorage) {
@@ -44,10 +42,7 @@ public class UserService {
     }
 
     public List<User> getFriendsUser(Integer userId) {
-        User user = userStorage.findUserById(userId);
-        return user.getFriends().stream()
-                .map(userStorage::findUserById)
-                .collect(Collectors.toList());
+        return userStorage.getFriendsUser(userId);
     }
 
     public User createUser(User user) {
@@ -63,15 +58,9 @@ public class UserService {
     public List<User> addFriend(Integer id, Integer idFriend) {
         log.info(MessageFormat.format(
                 "Вызов метода: /addFriend - userId: {0}, otherUserId: {1}", id, idFriend));
-        User user = userStorage.findUserById(id);
-        User friend = userStorage.findUserById(idFriend);
-        if (user == null) {
-            log.info(MessageFormat.format("Пользователь с id: {0} не найден", id));
-            throw new UserNotFountException(MessageFormat.format("Пользователь с id: {0} не найден", id));
-        } else if (friend == null) {
-            log.info(MessageFormat.format("Пользователь с id: {0} не найден", idFriend));
-            throw new UserNotFountException(MessageFormat.format("Пользователь с id: {0} не найден", idFriend));
-        } else if (user.getFriends().contains(idFriend)) {
+        User user = findUserByID(id);
+        User friend = findUserByID(idFriend);
+        if (user.getFriends().contains(idFriend)) {
             log.info(MessageFormat.format("Пользователь с id: {0} уже добавлен в друзья", idFriend));
         }
 
@@ -84,25 +73,14 @@ public class UserService {
                 userStorage.insertFriendship(id, idFriend);
         }
 
-        return user.getFriends().stream()
-                .map(userStorage::findUserById)
-                .collect(Collectors.toList());
+        return getFriendsUser(id);
     }
 
     public List<User> deleteFriend(Integer id, Integer idFriend) {
         log.info(MessageFormat.format(
                 "Вызов метода: /deleteFriend - userId: {0}, otherUserId: {1}", id, idFriend));
-        User user = userStorage.findUserById(id);
-        User friend = userStorage.findUserById(idFriend);
-        if (user == null) {
-            log.info(MessageFormat.format("Пользователь с id: {0} не найден", id));
-            throw new UserNotFountException(MessageFormat.format("Пользователь с id: {0} не найден", id));
-        } else if (friend == null) {
-            log.info(MessageFormat.format("Пользователь с id: {0} не найден", idFriend));
-            throw new UserNotFountException(MessageFormat.format("Пользователь с id: {0} не найден", idFriend));
-        } else if (user.getFriends().contains(idFriend)) {
-            log.info(MessageFormat.format("Пользователь с id: {0} уже добавлен в друзья", idFriend));
-        }
+        User user = findUserByID(id);
+        User friend = findUserByID(idFriend);
 
         user.removeFriend(friend);
 
@@ -113,17 +91,12 @@ public class UserService {
                 userStorage.updateFriendship(id, idFriend, 1);
         }
 
-        return user.getFriends().stream()
-                .map(userStorage::findUserById)
-                .collect(Collectors.toList());
+        return getFriendsUser(id);
     }
 
     public List<User> findMutualFriends(Integer userId, Integer otherUserId) {
-        Set<Integer> userFriends = userStorage.findUserById(userId).getFriends();
-        Set<Integer> otherUserFriends = userStorage.findUserById(otherUserId).getFriends();
-        return userFriends.stream()
-                .filter(otherUserFriends::contains)
-                .map(userStorage::findUserById)
-                .collect(Collectors.toList());
+        findUserByID(userId);
+        findUserByID(otherUserId);
+        return userStorage.findMutualFriends(userId, otherUserId);
     }
 }

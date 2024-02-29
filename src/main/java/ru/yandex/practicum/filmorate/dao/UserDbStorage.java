@@ -16,13 +16,13 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component("User_DAO")
-@Qualifier("Film_DAO")
+@Component
 @Primary
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
@@ -119,6 +119,27 @@ public class UserDbStorage implements UserStorage {
     public void removeFriendship(int id, int idFriend) {
         String sql = "DELETE FROM users_friendship WHERE id_user_1 = ? AND id_user_2 = ?";
         jdbcTemplate.update(sql, id, idFriend);
+    }
+
+    @Override
+    public List<User> getFriendsUser(Integer idUser) {
+        String sql = "SELECT * " +
+                "FROM users_friendship AS f " +
+                "INNER JOIN users AS u ON u.id_user = f.id_user_2 " +
+                "WHERE f.id_user_1 = ? " +
+                "ORDER BY u.id_user";
+        return jdbcTemplate.query(sql, this::makeUser, idUser);
+    }
+
+    @Override
+    public List<User> findMutualFriends(Integer userId, Integer otherUserId) {
+        String sql = "SELECT * " +
+                "FROM users_friendship AS f " +
+                "INNER JOIN users_friendship fr ON fr.id_user_2 = f.id_user_2 " +
+                "INNER JOIN users u ON u.id_user = fr.id_user_2 " +
+                "WHERE f.id_user_1 = ? AND fr.id_user_1 = ? " +
+                "AND f.id_user_2 <> fr.id_user_1 AND fr.id_user_2 <> f.id_user_1";
+        return jdbcTemplate.query(sql, this::makeUser, userId, otherUserId);
     }
 
     private void loadFriends(User user) {

@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class FilmService {
-    private final FilmStorage filmStorage; // @Primary in FilmDbStorage (Film_DAO)
-    private final UserStorage userStorage; // @Primary in UserDbStorage (User_DAO)
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {

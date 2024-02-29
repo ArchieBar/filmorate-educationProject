@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component("User_In_Memory")
+@Component
 public class InMemoryUserStorage implements UserStorage {
     @Getter
     private final Map<Integer, User> users = new HashMap<>();
@@ -79,5 +79,15 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void removeFriendship(int id, int idFriend) {
 
+    }
+
+    @Override
+    public List<User> getFriendsUser(Integer idUser) {
+        return null;
+    }
+
+    @Override
+    public List<User> findMutualFriends(Integer userId, Integer otherUserId) {
+        return null;
     }
 }
