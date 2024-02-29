@@ -62,7 +62,6 @@ public class UserService {
         User friend = findUserById(idFriend);
         if (user.getFriends().contains(idFriend)) {
             log.info(MessageFormat.format("Пользователь с id: {0} уже добавлен в друзья", idFriend));
-            return getFriendsUser(id);
         }
 
         user.setFriend(friend);
