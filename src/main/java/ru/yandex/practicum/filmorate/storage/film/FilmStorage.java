@@ -1,15 +1,19 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.film.Film;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface FilmStorage {
-    public Film findFilmById(Integer filmId);
+    Film findFilmById(Integer filmId) throws SQLException, IOException;
 
-    public List<Film> getAllFilm();
+    List<Film> getAllFilm();
 
-    public Film createFilm(Film film);
+    Film createFilm(Film film) throws SQLException, IOException;
 
-    public Film updateFilm(Film film);
+    Film updateFilm(Film film) throws SQLException, IOException;
+
+    void saveLikes(Film film);
 }

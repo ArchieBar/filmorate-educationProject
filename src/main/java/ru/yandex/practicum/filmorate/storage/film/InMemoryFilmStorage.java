@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFountException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.film.Film;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component
+@Component("Film_In_Memory")
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
 
@@ -56,5 +56,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         findFilmById(film.getId());
         films.put(film.getId(), film);
         return film;
+    }
+
+    @Override
+    public void saveLikes(Film film) {
+
     }
 }

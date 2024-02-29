@@ -1,6 +1,8 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.model.film;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
@@ -8,30 +10,40 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Data
+@ToString
+@RequiredArgsConstructor
 public class Film {
     private int id;
-
     @NotBlank(message = "Название фильма не может быть пустым.")
     private String name;
-
-    @Size(min = 0, max = 200, message = "Описание фильма не может быть больше 200 символов.")
+    @Size(min = 0, max = 200, message = "Описание фильма не может быть больше 255 символов.")
     private String description;
-
     private LocalDate releaseDate;
-
     @Positive
     private int duration;
+    private double rate;
+    private Mpa mpa;
+    private Set<Genre> genres = new TreeSet<>();
+    private Set<Integer> likes = new HashSet<>();
 
-    private Set<Integer> likes;
-
-    public Film(String name, String description, String releaseDate, int duration) {
+    public Film(
+            int id,
+            String name,
+            String description,
+            String releaseDate,
+            int duration,
+            double rate,
+            Mpa mpa) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = LocalDate.parse(releaseDate);
         this.duration = duration;
-        this.likes = new HashSet<>();
+        this.rate = rate;
+        this.mpa = mpa;
     }
 
     public int getCountLikes() {
@@ -44,5 +56,9 @@ public class Film {
 
     public void removeLike(Integer userId) {
         likes.remove(userId);
+    }
+
+    public void addGenre(Genre genre) {
+        this.genres.add(genre);
     }
 }

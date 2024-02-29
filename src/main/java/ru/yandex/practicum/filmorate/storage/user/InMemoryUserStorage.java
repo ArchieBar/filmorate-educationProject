@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.UserNotFountException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.user.User;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -25,10 +25,10 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User findUserByID(Integer userId) {
-       if (!users.containsKey(userId)) {
-           log.debug(MessageFormat.format("Пользователь с id: {0} не найден", userId) +
-                   "\n" + users);
+    public User findUserById(Integer userId) {
+        if (!users.containsKey(userId)) {
+            log.debug(MessageFormat.format("Пользователь с id: {0} не найден", userId) +
+                    "\n" + users);
             throw new UserNotFountException(MessageFormat.format("Пользователь с id: {0} не найден", userId));
         }
         return users.get(userId);
@@ -56,8 +56,38 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User updateUser(User user) {
         log.info("Вызов метода /updateUser - " + user);
-        findUserByID(user.getId());
+        findUserById(user.getId());
         users.put(user.getId(), user);
         return user;
+    }
+
+    @Override
+    public int checkFriendshipStatus(int id, int idFriend) {
+        return 0;
+    }
+
+    @Override
+    public void updateFriendship(int id, int idFriend, int idStatus) {
+
+    }
+
+    @Override
+    public void insertFriendship(int id, int idFriend) {
+
+    }
+
+    @Override
+    public void removeFriendship(int id, int idFriend) {
+
+    }
+
+    @Override
+    public List<User> getFriendsUser(Integer idUser) {
+        return null;
+    }
+
+    @Override
+    public List<User> findMutualFriends(Integer userId, Integer otherUserId) {
+        return null;
     }
 }

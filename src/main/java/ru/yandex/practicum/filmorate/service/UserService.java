@@ -3,13 +3,12 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.exception.UserNotFountException;
+import ru.yandex.practicum.filmorate.model.user.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,14 +22,19 @@ public class UserService {
 
     private User validateUserName(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
-            log.debug("Пустое имя, установлен логин вместо имени: " + user);
+            log.info("Пустое имя, установлен логин вместо имени: " + user);
             user.setName(user.getLogin());
         }
         return user;
     }
 
-    public User findUserByID(Integer userId) {
-        return userStorage.findUserByID(userId);
+    public User findUserById(Integer userId) {
+        User user = userStorage.findUserById(userId);
+        if (user != null) {
+            return user;
+        } else {
+            throw new UserNotFountException(MessageFormat.format("Пользователь с id: {0} не найден", userId));
+        }
     }
 
     public List<User> getAllUser() {
@@ -38,10 +42,7 @@ public class UserService {
     }
 
     public List<User> getFriendsUser(Integer userId) {
-        User user = userStorage.findUserByID(userId);
-        return user.getFriends().stream()
-                .map(userStorage::findUserByID)
-                .collect(Collectors.toList());
+        return userStorage.getFriendsUser(userId);
     }
 
     public User createUser(User user) {
@@ -54,41 +55,48 @@ public class UserService {
         return userStorage.updateUser(validateUserName(user));
     }
 
-    public List<User> addFriend(Integer userId, Integer otherUserId) {
+    public List<User> addFriend(Integer id, Integer idFriend) {
         log.info(MessageFormat.format(
-                "Вызов метода: /addFriend - userId: {0}, otherUserId: {1}", userId, otherUserId));
-        User user = userStorage.findUserByID(userId);
-        User otherUser = userStorage.findUserByID(otherUserId);
-        user.setFriend(otherUser);
-        otherUser.setFriend(user);
-        return user.getFriends().stream()
-                .map(userStorage::findUserByID)
-                .collect(Collectors.toList());
+                "Вызов метода: /addFriend - userId: {0}, otherUserId: {1}", id, idFriend));
+        User user = findUserById(id);
+        User friend = findUserById(idFriend);
+        if (user.getFriends().contains(idFriend)) {
+            log.info(MessageFormat.format("Пользователь с id: {0} уже добавлен в друзья", idFriend));
+        }
+
+        user.setFriend(friend);
+
+        switch (userStorage.checkFriendshipStatus(id, idFriend)) {
+            case 1:
+                userStorage.updateFriendship(id, idFriend, 2);
+            case 2:
+                userStorage.insertFriendship(id, idFriend);
+        }
+
+        return getFriendsUser(id);
     }
 
-    public List<User> deleteFriend(Integer userId, Integer otherUserId) {
+    public List<User> deleteFriend(Integer id, Integer idFriend) {
         log.info(MessageFormat.format(
-                "Вызов метода: /deleteFriend - userId: {0}, otherUserId: {1}", userId, otherUserId));
-        User user = userStorage.findUserByID(userId);
-        User otherUser = userStorage.findUserByID(otherUserId);
-        user.removeFriend(otherUser);
-        otherUser.removeFriend(user);
-        return user.getFriends().stream()
-                .map(userStorage::findUserByID)
-                .collect(Collectors.toList());
+                "Вызов метода: /deleteFriend - userId: {0}, otherUserId: {1}", id, idFriend));
+        User user = findUserById(id);
+        User friend = findUserById(idFriend);
+
+        user.removeFriend(friend);
+
+        switch (userStorage.checkFriendshipStatus(id, idFriend)) {
+            case 1:
+                userStorage.removeFriendship(id, idFriend);
+            case 2:
+                userStorage.updateFriendship(id, idFriend, 1);
+        }
+
+        return getFriendsUser(id);
     }
 
-    //FIXME
-    // Работает ли? :)
-    // - Не работает :(
-    // -- А нет, работает :)
-    // 24.01.24 - "Это была крутая бессонная ночь"
     public List<User> findMutualFriends(Integer userId, Integer otherUserId) {
-        Set<Integer> userFriends = userStorage.findUserByID(userId).getFriends();
-        Set<Integer> otherUserFriends = userStorage.findUserByID(otherUserId).getFriends();
-        return userFriends.stream()
-                .filter(otherUserFriends::contains)
-                .map(userStorage::findUserByID)
-                .collect(Collectors.toList());
+        findUserById(userId);
+        findUserById(otherUserId);
+        return userStorage.findMutualFriends(userId, otherUserId);
     }
 }
